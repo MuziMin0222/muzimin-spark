@@ -14,18 +14,18 @@ import scopt.OptionParser
 object ConfigurationParser {
   final val log: Logger = LogManager.getLogger(this.getClass)
 
-  case class ConfigFileName(job: Option[String] = None, fileName: Option[String] = None)
+  case class ConfigFileName(jobFilePath: Option[String] = None, confFilePath: Option[String] = None)
 
   private val CLIParser: OptionParser[ConfigFileName] = new scopt.OptionParser[ConfigFileName]("MuziMin") {
     head("MuziMin", "1.0")
     opt[String]('j', "job")
       .action((x, c) => {
-        c.copy(job = Option(x))
+        c.copy(jobFilePath = Option(x))
       })
       .text("Job configuration JSON")
     opt[String]('c', "conf")
       .action((x, c) => {
-        c.copy(fileName = Option(x))
+        c.copy(confFilePath = Option(x))
       })
       .text("Path to the job config file (YAML/JSON)")
 
@@ -38,23 +38,29 @@ object ConfigurationParser {
 
     CLIParser.parse(args, ConfigFileName()) match {
       case Some(arguments) => {
-        arguments.job match {
+        arguments.jobFilePath match {
           //将-j参数中的数据映射到此处
           case Some(job) => {
+            log.info("匹配上-j/--job传进来的参数,开始解析job文件...")
             parseConfigurationFile(job, FileUtils.getObjectMapperByExtension("json"))
           }
-          case None => arguments.fileName match {
+          case None => arguments.confFilePath match {
             //将-c 参数中的数据映射到此处
             case Some(fileName) => {
-              println("fileName: " + fileName)
+              log.info("匹配上-c/--conf传进来的参数，开始解析conf文件...")
+              parseConfigurationFile(fileName,FileUtils.getObjectMapperByFileName(fileName))
             }
             case None => {
-              throw new Exception("Failed to Parse Config file")
+              log.error("请传入正确的参数，-c/--conf传入conf文件， -j/-job 传入job文件")
+              throw new Exception("Failed to Parse Config file(没有匹配上文件)...")
             }
           }
         }
       }
-      case None => throw new Exception("no argument passed to MuziMin")
+      case None => {
+        log.error("请传入参数...")
+        throw new Exception("no argument passed to MuziMin")
+      }
     }
   }
 

@@ -21,7 +21,7 @@ import scala.collection.JavaConverters._
  **/
 object FileUtils {
   def main(args: Array[String]): Unit = {
-    println(StringSubstitutor.replace("fileContents,,,", getEnvProperties().asJava))
+    println(getObjectMapperByExtension("json"))
   }
 
   /**
