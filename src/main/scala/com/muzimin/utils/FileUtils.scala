@@ -13,6 +13,7 @@ import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.SparkSession
 
 import scala.collection.JavaConverters._
+import scala.io.{BufferedSource, Source}
 
 /**
  * @author : 李煌民
@@ -21,7 +22,7 @@ import scala.collection.JavaConverters._
  **/
 object FileUtils {
   def main(args: Array[String]): Unit = {
-    println(getObjectMapperByExtension("json"))
+    println(readConfigurationFile("conf/job.yaml"))
   }
 
   /**
@@ -92,7 +93,7 @@ object FileUtils {
    * @return
    */
   def getHadoopPath(path: String): HadoopPath = {
-    val hadoopConf = SparkSession.builder().getOrCreate().sessionState.newHadoopConf()
+    val hadoopConf = SparkSession.builder().master("local[*]").getOrCreate().sessionState.newHadoopConf()
 
     val file = new Path(path)
 
@@ -115,22 +116,49 @@ object FileUtils {
     reader.lines.collect(Collectors.joining("\n"))
   }
 
+  /**
+   * 读取配置文件中的数据封装为字符串
+   *
+   * @param path 文件路径
+   * @return 文件中的内容
+   */
   def readConfigurationFile(path: String): String = {
     val envAndSystemProperties = getEnvProperties()
-    val prefix = getFilesPathPrefix(Option.apply(envAndSystemProperties)).getOrElse("")
+    /*val prefix = getFilesPathPrefix(Option.apply(envAndSystemProperties)).getOrElse("")
 
-    val fileContents = readFileWithHadoop(prefix + path)
-    StringSubstitutor.replace(fileContents, envAndSystemProperties.asJava)
+    val fileContents = readFileWithHadoop(prefix + path)*/
+
+    val pathSource: BufferedSource = Source.fromFile(path)
+    val fileC = pathSource.getLines().mkString("\n")
+    StringSubstitutor.replace(fileC, envAndSystemProperties.asJava)
   }
 
+  /**
+   * 判断是否是本地文件路径
+   *
+   * @param path
+   * @return
+   */
   def isLocalDirectory(path: String): Boolean = {
     new File(path).isDirectory
   }
 
+  /**
+   * 判断是否是本地文件
+   *
+   * @param path
+   * @return
+   */
   def isLocalFile(path: String): Boolean = {
     new File(path).isFile
   }
 
+  /**
+   * 获取文件类型
+   *
+   * @param path
+   * @return
+   */
   def getFileFormat(path: String): String = {
     FileType.getFileType(path) match {
       case FileType.json | FileType.jsonl => "json"

@@ -1,6 +1,6 @@
-package com.muzimin.bean.job
+package com.muzimin.configuration.job
 
-import com.muzimin.bean.job.output.Redis
+import com.muzimin.configuration.job.output.{Hive, Redis}
 
 /**
  * @author: 李煌民
@@ -13,7 +13,7 @@ case class Output(
                    //Amazon Redshift 是一种可轻松扩展的完全托管型 PB 级数据仓库服务，可与您现有的商业智能工具协作。它通过使用列存储技术和并行化多个节点的查询来提供快速的查询性能
                    //redshift: Option[Redshift] = None,
                    //redis是一个key-value存储系统
-                   redis: Option[Redis] = None
+                   redis: Option[Redis] = None,
                    //数据文件空间
                    //segment: Option[Segment] = None,
                    //jdbc: Option[JDBC] = None,
@@ -22,5 +22,5 @@ case class Output(
                    //kafka: Option[Kafka] = None,
                    //elasticsearch: Option[Elasticsearch] = None,
                    //hudi: Option[Hudi] = None,
-                   //hive: Option[Hive] = None
+                   hive: Option[Hive] = None
                  )

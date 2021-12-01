@@ -33,7 +33,7 @@ object ConfigurationParser {
   }
 
   //解析传入的参数映射成configuration对象
-  def parse(args: Array[String]) = {
+  def parse(args: Array[String]): Configuration = {
     log.info("starting parsing configuration")
 
     CLIParser.parse(args, ConfigFileName()) match {
@@ -41,17 +41,17 @@ object ConfigurationParser {
         arguments.jobFilePath match {
           //将-j参数中的数据映射到此处
           case Some(job) => {
-            log.info("匹配上-j/--job传进来的参数,开始解析job文件...")
+            log.info("匹配上-j/--job传进来的参数,开始解析json数据...")
             parseConfigurationFile(job, FileUtils.getObjectMapperByExtension("json"))
           }
           case None => arguments.confFilePath match {
             //将-c 参数中的数据映射到此处
             case Some(fileName) => {
               log.info("匹配上-c/--conf传进来的参数，开始解析conf文件...")
-              parseConfigurationFile(fileName,FileUtils.getObjectMapperByFileName(fileName))
+              parseConfigurationFile(FileUtils.readConfigurationFile(fileName), FileUtils.getObjectMapperByFileName(fileName))
             }
             case None => {
-              log.error("请传入正确的参数，-c/--conf传入conf文件， -j/-job 传入job文件")
+              log.error("请传入正确的参数，-c/--conf传入conf文件， -j/-job 传入json数据")
               throw new Exception("Failed to Parse Config file(没有匹配上文件)...")
             }
           }
@@ -64,7 +64,7 @@ object ConfigurationParser {
     }
   }
 
-  //ObjectMapper  可以将对象转为我们需要的类型，使用object强制转换会出问题
+  //解析JSON最简单的方法  可以将对象转为我们需要的类型，使用object强制转换会出问题
   def parseConfigurationFile(job: String, mapper: Option[ObjectMapper]): Configuration = {
     mapper match {
       case Some(mapper) => {

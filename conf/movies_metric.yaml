@@ -1,0 +1,55 @@
+steps:
+- dataFrameName: moviesWithRatings
+  sql:
+    SELECT userid,
+           movies.movieid,
+           rating,
+           timestamp,
+           title,
+           genres
+    FROM ratings
+    JOIN movies ON ratings.movieid = movies.movieid
+- dataFrameName: fantasyMoviesWithRatings
+  sql:
+    SELECT movieId,
+           cast(rating AS float) AS rating,
+           timestamp,
+           title,
+           genres
+    FROM moviesWithRatings
+    WHERE genres LIKE '%Fantasy%'
+- dataFrameName: topFantasyMovies
+  file: topFantasyMovies.sql
+- dataFrameName: myFavoriteMovieRated
+  sql:
+    SELECT *
+    FROM topFantasyMovies
+    WHERE title = ${myFavoriteMovie}
+output:
+- dataFrameName: topFantasyMovies
+  outputType: Parquet
+  outputOptions:
+    saveMode: Overwrite
+    path: topFantasyMovies.parquet
+    createUniquePath: true
+- dataFrameName: topFantasyMovies
+  outputType: CSV
+  outputOptions:
+    saveMode: Overwrite
+    path: topFantasyMovies.csv
+    coalesce: true
+    extraOptions:
+      multiline: "true"
+- dataFrameName: topFantasyMovies
+  outputType: JSON
+  outputOptions:
+    saveMode: Overwrite
+    path: topFantasyMovies.jsonl
+    repartition: 10
+- dataFrameName: topFantasyMovies
+  outputType: File
+  outputOptions:
+    saveMode: Overwrite
+    path: topFantasyMovies.xml
+    format: com.databricks.spark.xml
+    repartition: 2

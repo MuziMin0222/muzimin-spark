@@ -1,5 +1,10 @@
 package com.muzimin
 
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.muzimin.configuration.Configuration
+import org.junit.Test
+
 import scala.collection.mutable
 
 /**
@@ -7,9 +12,15 @@ import scala.collection.mutable
  * @date: 2021-11-17 22:57
  *        ${description}
  **/
-object MethodTest {
-  def main(args: Array[String]): Unit = {
-    val map = new mutable.HashMap[String, String]()
-    println(map("aaa"))
+class MethodTest {
+  @Test
+  def testReadValue(): Unit = {
+    val mapper = new ObjectMapper()
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+    mapper.registerModule(DefaultScalaModule)
+    println(mapper.readValue("conf/job.yaml", classOf[demo]))
   }
 }
+
+case class demo(aaa:String)
