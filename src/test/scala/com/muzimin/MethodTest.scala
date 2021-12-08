@@ -19,7 +19,6 @@ class MethodTest {
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     mapper.registerModule(DefaultScalaModule)
-    println(mapper.readValue("conf/job.yaml", classOf[demo]))
   }
 }
 

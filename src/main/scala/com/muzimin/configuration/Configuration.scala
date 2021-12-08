@@ -1,6 +1,6 @@
 package com.muzimin.configuration
 
-import com.muzimin.configuration.job.Output
+import com.muzimin.configuration.job.{Catalog, Instrumentation, Output}
 
 /**
  * @author : 李煌民
@@ -11,18 +11,18 @@ case class Configuration(
                           metrics: Option[Seq[String]],
                           //inputs: Option[Map[String, Input]],
                           variables: Option[Map[String, String]],
-                          //instrumentation: Option[Instrumentation],
+                          instrumentation: Option[Instrumentation], // influxDB配置
                           output: Option[Output],
                           outputs: Option[Map[String, Output]],
-                          //catalog: Option[Catalog],
+                          catalog: Option[Catalog],    //Spark Catalog 配置
                           cacheOnPreview: Option[Boolean],
                           showQuery: Option[Boolean],
                           //streaming: Option[Streaming],
                           //periodic: Option[Periodic],
-                          var logLevel: Option[String],
+                          var logLevel: Option[String], //日志级别配置
                           var showPreviewLines: Option[Int],
                           var explain: Option[Boolean],
-                          var appName: Option[String],
+                          var appName: Option[String],  //任务的appName配置
                           var continueOnFailedStep: Option[Boolean],
                           var cacheCountOnOutput: Option[Boolean],
                           var ignoreDeequValidations: Option[Boolean],

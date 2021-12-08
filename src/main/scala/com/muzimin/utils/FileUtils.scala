@@ -21,10 +21,6 @@ import scala.io.{BufferedSource, Source}
  *       ${description}
  **/
 object FileUtils {
-  def main(args: Array[String]): Unit = {
-    println(readConfigurationFile("conf/job.yaml"))
-  }
-
   /**
    * 将本地文件夹/文件中的所有文件放入List中
    *

@@ -1,6 +1,6 @@
 # The MQL file path
 metrics:
-  - conf/movies_metric.yaml
+  - conf/step.yaml
 
 inputs:
   movies:

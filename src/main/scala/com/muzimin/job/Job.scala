@@ -2,9 +2,13 @@ package com.muzimin.job
 
 import com.muzimin.configuration.Configuration
 import com.muzimin.configuration.job.Output
+import com.muzimin.input.Reader
+import com.muzimin.instrumentation.{InstrumentationFactory, InstrumentationProvider, StreamingQueryMetricsListener}
 import com.muzimin.output.wirtes.hive.HiveOutputWriter
 import com.muzimin.output.wirtes.redis.RedisOutputWriter
 import org.apache.log4j.LogManager
+import org.apache.spark.SparkContext
+import org.apache.spark.scheduler.{SparkListener, SparkListenerJobEnd}
 import org.apache.spark.sql.SparkSession
 
 
@@ -51,4 +55,66 @@ case class Job(config: Configuration, sparkSession: Option[SparkSession] = None)
     }
   }
   val sc = spark.sparkContext
+
+  //如果配置了influxDB，将influxDB的配置配上
+  private val instrumentationFactory: InstrumentationFactory = InstrumentationProvider.getInstrumentationFactory(config.appName, config.instrumentation)
+  private val instrumentationClient: InstrumentationProvider = instrumentationFactory.create()
+
+  //将监听器进行初始化
+  StreamingQueryMetricsListener.init(spark, instrumentationClient)
+
+  //注册一个监听器来接收在执行过程中发生的事件的向上调用
+  sc.addSparkListener(new SparkListener {
+    override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = {
+      instrumentationClient.close()
+    }
+  })
+
+  //配置日志级别
+  setSparkLogLevel(config.logLevel, sc)
+  //将变量设置在sql中
+  registerVariable(config.variables, spark)
+  //将配置文件中配置的Input，转为DataFrame，并注册为临时表
+  registerDataFrames()
+
+  //如果配置了catalog，在spark环境中配置一下，目前只有Database一个配置项
+  config.catalog match {
+    case Some(catalog) => {
+      catalog.database match {
+        case Some(database) => {
+          spark.sql(s"CREATE DATABASE IF NOT EXISTS $database")
+          spark.catalog.setCurrentDatabase(database)
+        }
+        case None =>
+      }
+    }
+    case None =>
+  }
+
+  //设置spark log的日志级别
+  private def setSparkLogLevel(logLevel: Option[String], sc: SparkContext): Unit = {
+    logLevel match {
+      case Some(logLevel) => {
+        sc.setLogLevel(logLevel)
+      }
+      case None =>
+    }
+  }
+
+  //如果配置了参数，比如动态分区，在该方法中进行设定
+  private def registerVariable(variable: Option[Map[String, String]], spark: SparkSession): Unit = {
+    variable.getOrElse(Map())
+      .foreach({
+        case (k, v) => {
+          spark.sql(s"set $k = '$v''")
+        }
+      })
+  }
+
+  //将配置文件中的input封装为DataFrame，并注册为临时表
+  private def registerDataFrames(inputs: Seq[Reader], spark: SparkSession) = {
+    if (inputs.nonEmpty) {
+
+    }
+  }
 }
