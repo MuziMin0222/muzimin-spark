@@ -75,7 +75,7 @@ case class Job(config: Configuration, sparkSession: Option[SparkSession] = None)
   //将变量设置在sql中
   registerVariable(config.variables, spark)
   //将配置文件中配置的Input，转为DataFrame，并注册为临时表
-  registerDataFrames()
+  registerDataFrames(config.getReaders,spark)
 
   //如果配置了catalog，在spark环境中配置一下，目前只有Database一个配置项
   config.catalog match {
@@ -112,9 +112,16 @@ case class Job(config: Configuration, sparkSession: Option[SparkSession] = None)
   }
 
   //将配置文件中的input封装为DataFrame，并注册为临时表
-  private def registerDataFrames(inputs: Seq[Reader], spark: SparkSession) = {
+  private def registerDataFrames(inputs: Seq[Reader], spark: SparkSession): Unit = {
     if (inputs.nonEmpty) {
+      inputs.foreach(
+        input => {
+          log.info(s"开始将配置的input${input.name}选项注册为DataFrame,并创建临时表，表名为：${input.name}")
+          val df = input.read(spark)
 
+          df.createOrReplaceTempView(input.name)
+        }
+      )
     }
   }
 }

@@ -1,8 +1,12 @@
 package com.muzimin
 
+import java.io.File
+
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.muzimin.configuration.Configuration
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.streaming.DataStreamReader
 import org.junit.Test
 
 import scala.collection.mutable
@@ -20,6 +24,39 @@ class MethodTest {
 
     mapper.registerModule(DefaultScalaModule)
   }
+
+  @Test
+  def testIsDedind(): Unit = {
+    val file = Option.apply(new File(""))
+
+    println(Seq(file).find(
+      x => {
+        x.isDefined
+      }
+    ).get)
+  }
+
+  @Test
+  def testSparkReadStream(): Unit = {
+    val spark = SparkSession.builder()
+      .master("local[*]")
+      .appName("demo")
+      .getOrCreate()
+
+    val streamReader = spark.readStream.format("csv").load("/Users/muzimin/study/test_files/a.csv")
+
+    streamReader.show()
+
+    spark.close()
+  }
+
+  @Test
+  def testRequire(): Unit = {
+
+    require(1 < 2,"这是必须是True，程序才能往下执行")
+
+    println("这是执行的程序")
+  }
 }
 
-case class demo(aaa:String)
+case class demo(aaa: String)

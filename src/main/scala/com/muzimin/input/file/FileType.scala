@@ -9,18 +9,18 @@ import org.apache.commons.io.FilenameUtils
  **/
 object FileType extends Enumeration {
   type TableType = Value
-  val parquet, json, jsonl, csv = Value
+  val parquet, json, jsonl, csv, txt, excel = Value
 
   def isValidFileType(s: String): Boolean = values.exists(_.toString == s)
 
   /**
-   * 不属于这些枚举文件默认parquet
+   * 不属于这些枚举文件默认csv文本文件
    *
    * @param path
    * @return
    */
   def getFileType(path: String): TableType = {
     val extension = FilenameUtils.getExtension(path)
-    if (isValidFileType(extension)) FileType.withName(extension) else parquet
+    if (isValidFileType(extension)) FileType.withName(extension) else csv
   }
 }

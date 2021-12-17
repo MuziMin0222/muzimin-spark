@@ -17,6 +17,7 @@ object Application {
     log.info("start muzimin - parsing configuration")
     //将传入的配置文件进行解析，形成config对象
     val config: Configuration = ConfigurationParser.parse(args)
+    log.info("配置文件内容如下：" + config)
     //根据输出类型，来创建sparkSession对象，不同的输出对应不同的SparkSession配置
     val spark: SparkSession = Job.createSparkSession(config.appName, config.output)
 

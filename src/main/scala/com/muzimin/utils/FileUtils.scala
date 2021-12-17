@@ -150,7 +150,7 @@ object FileUtils {
   }
 
   /**
-   * 获取文件类型
+   * 获取文件类型,默认读取的是csv文件
    *
    * @param path
    * @return
@@ -159,7 +159,9 @@ object FileUtils {
     FileType.getFileType(path) match {
       case FileType.json | FileType.jsonl => "json"
       case FileType.csv => "csv"
-      case _ => "parquet"
+      case FileType.parquet => "parquet"
+      case FileType.txt => "txt"
+      case _ => "csv"
     }
   }
 }

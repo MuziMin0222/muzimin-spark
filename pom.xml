@@ -165,6 +165,13 @@
             <version>2.14</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.typesafe.play/play-json -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-json_2.11</artifactId>
+            <version>2.7.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
