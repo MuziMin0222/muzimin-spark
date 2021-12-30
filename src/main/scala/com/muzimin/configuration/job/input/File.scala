@@ -1,6 +1,5 @@
 package com.muzimin.configuration.job.input
 
-import com.muzimin.configuration.job.config.InputConfig
 import com.muzimin.input.Reader
 import com.muzimin.input.file.FileInput
 

@@ -1,6 +1,6 @@
 package com.muzimin
 
-import com.muzimin.configuration.{Configuration, ConfigurationParser}
+import com.muzimin.configuration.job.{Configuration, ConfigurationParser}
 import com.muzimin.job.Job
 import org.apache.log4j.LogManager
 import org.apache.spark.sql.SparkSession
@@ -24,8 +24,25 @@ object Application {
     try {
       val job = Job(config, Option(spark))
 
+      executeBatchJob(job)
+
     } finally {
       spark.stop()
+    }
+  }
+
+  def executeBatchJob(job:Job): Unit = {
+    job.config.steps match {
+      case Some(steps) => {
+        steps.foreach(
+          stepPath => {
+
+          }
+        )
+      }
+      case None => {
+        log.warn("没有执行步骤的定义文件，退出程序")
+      }
     }
   }
 }

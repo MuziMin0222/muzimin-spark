@@ -5,4 +5,4 @@ steps:
 inputs:
   ratings:
     file:
-      path: examples/file_inputs/ratings.csv
+      path: examples/file_inputs

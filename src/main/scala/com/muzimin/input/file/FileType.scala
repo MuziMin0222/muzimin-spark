@@ -9,7 +9,7 @@ import org.apache.commons.io.FilenameUtils
  **/
 object FileType extends Enumeration {
   type TableType = Value
-  val parquet, json, jsonl, csv, txt, excel = Value
+  val parquet, json, jsonl, csv, excel = Value
 
   def isValidFileType(s: String): Boolean = values.exists(_.toString == s)
 

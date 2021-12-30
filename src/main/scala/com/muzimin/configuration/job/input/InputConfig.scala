@@ -1,4 +1,4 @@
-package com.muzimin.configuration.job.config
+package com.muzimin.configuration.job.input
 
 import com.muzimin.input.Reader
 

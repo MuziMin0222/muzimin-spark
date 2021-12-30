@@ -4,7 +4,7 @@ import java.io.File
 
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.muzimin.configuration.Configuration
+import com.muzimin.configuration.job.Configuration
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.streaming.DataStreamReader
 import org.junit.Test
@@ -56,6 +56,12 @@ class MethodTest {
     require(1 < 2,"这是必须是True，程序才能往下执行")
 
     println("这是执行的程序")
+  }
+
+  @Test
+  def testSystemSeq():Unit = {
+    val value = "/user/muzimin/a.txt"
+    println(value.substring(value.lastIndexOf(File.separator) + 1))
   }
 }
 

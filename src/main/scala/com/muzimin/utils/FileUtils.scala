@@ -160,7 +160,6 @@ object FileUtils {
       case FileType.json | FileType.jsonl => "json"
       case FileType.csv => "csv"
       case FileType.parquet => "parquet"
-      case FileType.txt => "txt"
       case _ => "csv"
     }
   }

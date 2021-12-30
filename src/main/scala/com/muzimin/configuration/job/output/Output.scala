@@ -1,6 +1,4 @@
-package com.muzimin.configuration.job
-
-import com.muzimin.configuration.job.output.{Hive, Redis}
+package com.muzimin.configuration.job.output
 
 /**
  * @author: 李煌民

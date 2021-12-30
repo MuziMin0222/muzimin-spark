@@ -1,4 +1,4 @@
-package com.muzimin.configuration
+package com.muzimin.configuration.job
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
@@ -9,7 +9,7 @@ import scopt.OptionParser
 /**
  * @author : 李煌民
  * @date : 2021-09-08 11:02
- *       ${description}
+ *       解析传入进来的config.yaml 或者 传入进来的json数据/文件
  **/
 object ConfigurationParser {
   final val log: Logger = LogManager.getLogger(this.getClass)

@@ -1,4 +1,4 @@
-package com.muzimin.configuration.job
+package com.muzimin.configuration.job.catalog
 
 /**
  * @author: 李煌民

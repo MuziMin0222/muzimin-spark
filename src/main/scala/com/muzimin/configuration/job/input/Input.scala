@@ -1,8 +1,5 @@
-package com.muzimin.configuration.job
+package com.muzimin.configuration.job.input
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.muzimin.configuration.job.config.InputConfig
-import com.muzimin.configuration.job.input.File
 import com.muzimin.input.Reader
 
 /**

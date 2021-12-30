@@ -1,9 +1,8 @@
 package com.muzimin.job
 
-import com.muzimin.configuration.Configuration
-import com.muzimin.configuration.job.Output
+import com.muzimin.configuration.job.Configuration
+import com.muzimin.configuration.job.output.Output
 import com.muzimin.input.Reader
-import com.muzimin.instrumentation.{InstrumentationFactory, InstrumentationProvider, StreamingQueryMetricsListener}
 import com.muzimin.output.wirtes.hive.HiveOutputWriter
 import com.muzimin.output.wirtes.redis.RedisOutputWriter
 import org.apache.log4j.LogManager
@@ -56,20 +55,6 @@ case class Job(config: Configuration, sparkSession: Option[SparkSession] = None)
   }
   val sc = spark.sparkContext
 
-  //如果配置了influxDB，将influxDB的配置配上
-  private val instrumentationFactory: InstrumentationFactory = InstrumentationProvider.getInstrumentationFactory(config.appName, config.instrumentation)
-  private val instrumentationClient: InstrumentationProvider = instrumentationFactory.create()
-
-  //将监听器进行初始化
-  StreamingQueryMetricsListener.init(spark, instrumentationClient)
-
-  //注册一个监听器来接收在执行过程中发生的事件的向上调用
-  sc.addSparkListener(new SparkListener {
-    override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = {
-      instrumentationClient.close()
-    }
-  })
-
   //配置日志级别
   setSparkLogLevel(config.logLevel, sc)
   //将变量设置在sql中
@@ -106,7 +91,7 @@ case class Job(config: Configuration, sparkSession: Option[SparkSession] = None)
     variable.getOrElse(Map())
       .foreach({
         case (k, v) => {
-          spark.sql(s"set $k = '$v''")
+          spark.sql(s"set $k = '$v'")
         }
       })
   }
@@ -116,8 +101,10 @@ case class Job(config: Configuration, sparkSession: Option[SparkSession] = None)
     if (inputs.nonEmpty) {
       inputs.foreach(
         input => {
-          log.info(s"开始将配置的input${input.name}选项注册为DataFrame,并创建临时表，表名为：${input.name}")
+          log.info(s"开始将配置的input: ${input.name}选项注册为DataFrame,并创建临时表，表名为：${input.name}")
           val df = input.read(spark)
+
+          df.show()
 
           df.createOrReplaceTempView(input.name)
         }

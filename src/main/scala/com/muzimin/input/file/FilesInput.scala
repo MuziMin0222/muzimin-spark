@@ -20,6 +20,8 @@ case class FilesInput(
     val readFormat = getFormat(format, paths.head)
     val reader = spark.read.format(readFormat)
 
+    //todo 这里需要增加读取excel，txt的配置
+
     val readOptions = getOptions(readFormat, options)
     val schema = getSchemaStruct(schemaPath)
 
