@@ -6,6 +6,15 @@ package com.muzimin.configuration.step
  *        ${description}
  **/
 case class Configuration(
-                        steps:List[Step],
-                        output:Option[List[Output]]
-                        )
+                          steps: List[Step],
+                          output: Option[List[Output]]
+                        ) {
+  override def toString: String = {
+    s"""
+       |Step Configuration {
+       |steps: $steps,
+       |output: $output
+       |}
+       |""".stripMargin
+  }
+}

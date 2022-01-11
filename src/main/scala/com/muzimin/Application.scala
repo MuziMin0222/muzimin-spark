@@ -2,6 +2,7 @@ package com.muzimin
 
 import com.muzimin.configuration.job.{Configuration, ConfigurationParser}
 import com.muzimin.job.Job
+import com.muzimin.step.StepSet
 import org.apache.log4j.LogManager
 import org.apache.spark.sql.SparkSession
 
@@ -31,12 +32,13 @@ object Application {
     }
   }
 
-  def executeBatchJob(job:Job): Unit = {
+  def executeBatchJob(job: Job): Unit = {
     job.config.steps match {
       case Some(steps) => {
         steps.foreach(
           stepPath => {
-
+            val stepSet = new StepSet(stepPath)
+            stepSet.run(job)
           }
         )
       }

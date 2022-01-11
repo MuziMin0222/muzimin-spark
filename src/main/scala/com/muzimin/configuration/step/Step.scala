@@ -13,5 +13,7 @@ case class Step(
                  params: Option[Map[String, String]],
                  var ignoreOnFailures: Option[Boolean]
                ) {
+
+  //如果没有传入ignoreOnFailures  默认是False
   ignoreOnFailures = Option(ignoreOnFailures.getOrElse(false))
 }

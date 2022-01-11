@@ -1,0 +1,3 @@
+select
+  movieid
+from fantasyMoviesWithRatings

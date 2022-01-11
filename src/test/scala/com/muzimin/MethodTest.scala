@@ -62,6 +62,9 @@ class MethodTest {
   def testSystemSeq():Unit = {
     val value = "/user/muzimin/a.txt"
     println(value.substring(value.lastIndexOf(File.separator) + 1))
+
+    println(System.nanoTime())
+    println(System.currentTimeMillis())
   }
 }
 

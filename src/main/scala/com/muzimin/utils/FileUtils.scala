@@ -40,6 +40,7 @@ object FileUtils {
 
   /**
    * 通过传入的文件类型进行对象转换
+   * 传入的参数匹配不上json，都以yaml文件进行处理
    *
    * @param extension
    * @return

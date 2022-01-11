@@ -2,13 +2,12 @@ steps:
 - dataFrameName: moviesWithRatings
   sql:
     SELECT userid,
-           movies.movieid,
+           movieid,
            rating,
            timestamp,
-           title,
-           genres
+           'demo' as title,
+           '111' as genres
     FROM ratings
-    JOIN movies ON ratings.movieid = movies.movieid
 - dataFrameName: fantasyMoviesWithRatings
   sql:
     SELECT movieId,
@@ -17,39 +16,11 @@ steps:
            title,
            genres
     FROM moviesWithRatings
-    WHERE genres LIKE '%Fantasy%'
 - dataFrameName: topFantasyMovies
-  file: topFantasyMovies.sql
-- dataFrameName: myFavoriteMovieRated
-  sql:
-    SELECT *
-    FROM topFantasyMovies
-    WHERE title = ${myFavoriteMovie}
-output:
-- dataFrameName: topFantasyMovies
-  outputType: Parquet
-  outputOptions:
-    saveMode: Overwrite
-    path: topFantasyMovies.parquet
-    createUniquePath: true
-- dataFrameName: topFantasyMovies
-  outputType: CSV
-  outputOptions:
-    saveMode: Overwrite
-    path: topFantasyMovies.csv
-    coalesce: true
-    extraOptions:
-      multiline: "true"
-- dataFrameName: topFantasyMovies
-  outputType: JSON
-  outputOptions:
-    saveMode: Overwrite
-    path: topFantasyMovies.jsonl
-    repartition: 10
-- dataFrameName: topFantasyMovies
-  outputType: File
-  outputOptions:
-    saveMode: Overwrite
-    path: topFantasyMovies.xml
-    format: com.databricks.spark.xml
-    repartition: 2
+  file: examples/sqlFile/topFantasyMovies.sql
+
+- dataFrameName: table3
+  classpath: com.muzimin.job.mycode.Demo1
+  params:
+    param1: 20210101
+    param2: 20220101

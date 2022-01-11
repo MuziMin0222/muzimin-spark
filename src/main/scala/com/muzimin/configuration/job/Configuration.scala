@@ -13,14 +13,15 @@ import com.muzimin.input.Reader
 case class Configuration(
                           steps: Option[Seq[String]],
                           inputs: Option[Map[String, Input]],
-                          variables: Option[Map[String, String]],   //sql中要配置的变量
+                          variables: Option[Map[String, String]], //sql中要配置的变量
                           output: Option[Output],
                           outputs: Option[Map[String, Output]],
                           catalog: Option[Catalog], //Spark Catalog 配置
                           cacheOnPreview: Option[Boolean],
                           showQuery: Option[Boolean],
                           var logLevel: Option[String], //日志级别配置
-                          var appName: Option[String] //任务的appName配置
+                          var appName: Option[String], //任务的appName配置
+                          var showPreviewLines: Option[Int] //DataFrame show的行数
                         ) {
 
   //require 表示step文件必须要有，否则程序直接退出
@@ -29,6 +30,7 @@ case class Configuration(
   logLevel = Option(logLevel.getOrElse("INFO"))
   //设置默认的AppName
   appName = Option(appName.getOrElse("MuziMinSpark"))
+  showPreviewLines = Option(showPreviewLines.getOrElse(0))
 
   //将配置文件中配置的input，转为临时表，临时表的表名就是map的key
   def getReaders: Seq[Reader] = {
@@ -52,6 +54,7 @@ case class Configuration(
        |showQuery -> $showQuery
        |logLevel -> $logLevel
        |appName -> $appName
+       |showPreviewLines -> $showPreviewLines
        |""".stripMargin
   }
 }

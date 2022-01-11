@@ -44,7 +44,7 @@ trait FileInputBase {
             "quote" -> "\"", //设置CSV每个字段的包裹符
             "escape" -> "\"", //设置csv文件中的字段存在双引号，进行转义处理
             "quoteAll" -> "true", //设置整个csv文件进行双引号全包裹
-            "header" -> "true"
+            "header" -> "true" //默认CSV第一行就是表头
           ) ++ options.getOrElse(Map())
         )
       }
