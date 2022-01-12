@@ -34,9 +34,9 @@ object SchemaConverter {
 
   def convert(inputSchema: JsValue): StructType = {
     //获取json中的name字段的值
-    val name = getJsonName(inputSchema)
+    val name: String = getJsonName(inputSchema)
 
-    val typeName = getJsonType(inputSchema)
+    val typeName = getJsonType(inputSchema).typeName
 
     if (name == SchemaRoot && typeName.equals("object")) {
       val properties = (inputSchema \ SchemaStructContents).as[JsObject]
@@ -123,16 +123,5 @@ object SchemaConverter {
 
   def getJsonId(json: JsValue): String = {
     (json \ SchemaFieldId).as[String]
-  }
-
-  def main(args: Array[String]): Unit = {
-    val content = FileUtils.readConfigurationFile("/Users/muzimin/study/test_files/a.json")
-
-    println(content)
-
-    val value = loadSchemaJson(content)
-    println(value)
-
-    println(getJsonName(value))
   }
 }
