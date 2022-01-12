@@ -75,7 +75,19 @@ inputs:
 
 8. logLevel：设置spark的日志级别，非必选项；默认是INFO，可以选择的值有ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN
 
-9. config.yaml的完整样例
+9. 输出的配置项(目前只实现了输出到文件中的操作)
+
+   1. 结果输出到文件中，dir是必选参数
+
+      ```yaml
+      output:
+        file:
+          dir: examples/file_outputs/op1
+      ```
+
+      
+
+10. config.yaml的完整样例
 
 ```yaml
 steps:
@@ -101,16 +113,51 @@ variables:
 logLevel: WARN
 
 appName: MuziMinSpark_V1.0
+
+output:
+  file:
+    dir: examples/file_outputs/op1
 ```
 
-### 如果配置step.yaml文件
+### 如何配置step.yaml文件
 
 1. 以steps开始的数组
+
    1. dataFrameName：表示处理后注册得到的临时表，亦或者是UDF的名称
    2. sql：表示sql语句；
    3. file：表示sql所在的sql文件；
-   4. classpath：表示继承com.muzimin.job.RichProcessJob的子类，该子类中可以使用代码进行数据操作；
+   4. classpath：表示继承com.muzimin.job.RichProcessJob的子类，该子类中可以使用代码进行数据操作；案例如下
+
+   ```scala
+   class Demo1 extends RichProcessJob {
+     override def run(sparkSession: SparkSession, dataFrameName: String, params: Option[Map[String, String]]): Unit = {
+   
+       val myudf = udf(
+         (column:String) => {
+           column + "这是UDF产生的列"
+         }
+       )
+   
+       println("dataFrameName ====> " + dataFrameName)
+   
+       println(params)
+   
+       val df = sparkSession.table("ratings")
+           .withColumn("userId_new",myudf(col("userId")))
+   
+       df.show(false)
+   
+       df.createOrReplaceTempView(dataFrameName)
+     }
+   }
+   ```
+
    5. params：表示一些自定义变量，由key-value组成
+   6. 定义将哪一个DataFrame输出，output下是一个数组，可以定义多个DataFrame进行输出，目前只实现了输出到文件的方式
+      1. dataFrameName：这是必选项，名称是在steps中得到dataFrameName的名字或者配置文件中input得到的dataFrameName名字
+      2. outputType：必选项，目前可选择Parquet, CSV, JSON, File这四种类型
+      3. outputOptions：非必选项，定义一些文件的配置项，比如saveMode，format，repartition，partitionBy，extraOptions，path
+   7. step文件的完成样例如下
 
 ```yaml
 steps:
@@ -145,6 +192,14 @@ steps:
     SELECT *,'测试环境变量' as test
     FROM moviesWithRatings
     WHERE timestamp = ${mytimestamp}
+    
+output:
+  - dataFrameName: myFavoriteMovieRated
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2
 ```
 
 

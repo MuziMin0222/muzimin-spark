@@ -22,7 +22,7 @@ class Demo1 extends RichProcessJob {
 
     println(params)
 
-    val df = sparkSession.sql("select *,'code' as demo from ratings")
+    val df = sparkSession.table("ratings")
         .withColumn("userId_new",myudf(col("userId")))
 
     df.show(false)
