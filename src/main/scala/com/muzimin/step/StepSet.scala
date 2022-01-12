@@ -21,19 +21,18 @@ class StepSet(stepPath: String, write: Boolean = true) {
     Seq(ConfigurationParser.parse(stepPath))
   }
 
-  def run(job: Job) = {
+  def run(job: Job):Unit = {
     stepConfSeq.foreach(
       step => {
-        //获取纳秒级
-        val startTime = System.nanoTime()
+        val startTime = System.currentTimeMillis()
 
         step.transform(job)
         if (write) {
-          step
+          step.write(job)
         }
 
-        val endTime = System.nanoTime()
-        log.info(step.stepFileName +  " 任务执行的时间：" + (endTime - startTime) + "纳秒")
+        val endTime = System.currentTimeMillis()
+        log.info(step.stepFileName +  " 任务执行的时间：" + (endTime - startTime) + "毫秒")
       }
     )
   }

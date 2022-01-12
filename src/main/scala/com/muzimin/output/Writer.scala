@@ -1,5 +1,6 @@
 package com.muzimin.output
 
+import org.apache.log4j.LogManager
 import org.apache.spark.sql.DataFrame
 
 /**
@@ -14,4 +15,6 @@ trait Writer extends Serializable {
    * @param dataFrame DataFrame结果集
    */
   def write(dataFrame: DataFrame): Unit
+
+  val log = LogManager.getLogger(this.getClass)
 }

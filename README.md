@@ -4,16 +4,18 @@
 # 如何在idea中运行示例代码
 在本地运行时，需要将所有的文件的路径写成绝对/相对路径
 1. VM options中添加
-```$xslt
+```yaml
 -Dspark.master=local[*]
 -Dspark.serializer=org.apache.spark.serializer.KryoSerializer
 ```
 2. Program argument中添加配置文件的位置或者Json配置数据
-```$xslt
+```yaml
 -c conf/config.yaml
 或者
 -j {"aaa":"bbb"}
 ```
+
+![image-20220112112204048](/Users/muzimin/code/IdeaProjects/muziminspark/image-20220112112204048.png)
 
 3. 运行Job前需要指定两个文件，config.yaml以及step.yaml，因为在本地运行，所以指定文件路径的时候弄成相对路径或者绝对路径，可以让程序访问到即可
 
@@ -21,7 +23,7 @@
 
 1. 开头先指定好step.yaml的路径，相对路径或者绝对路径，step.yaml可以有多个，steps参数是必选项，如果没有，程序将退出
 
-```
+```yaml
 steps:
   - conf/step.yaml
   - conf/step_2.yaml
@@ -51,9 +53,29 @@ inputs:
 ```
 
 3. showPreviewLines，非必选值，默认是0；表示将处理后的DataFrame，show出来多少行
+
 4. showQuery：是否将sql语句进行输出控制台；非必选值
+
 5. cacheOnPreview：非必选值，表示是否将DataFrame进行缓存（该缓存级别是内存级）
-6. config.yaml的完整样例
+
+6. variables：sql变量值，key-value类型，非必选项，如果配置了，那么就会在程序中进行设置
+
+   ```yaml
+   set $key = '$value'
+   ```
+
+   1. 比如设置时间戳等于多少
+
+   ```yaml
+   variables:
+     mytimestamp: '1260759144'
+   ```
+
+7. appName：设置程序运行的名称，非必选项；默认值是MuziMinSpark
+
+8. logLevel：设置spark的日志级别，非必选项；默认是INFO，可以选择的值有ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN
+
+9. config.yaml的完整样例
 
 ```yaml
 steps:
@@ -65,7 +87,6 @@ inputs:
       path: examples/file_inputs
       format: csv
       options:
-        delimiter: "\u0001"
         nullValue: "空值"
 
 showPreviewLines: 10
@@ -73,6 +94,13 @@ showPreviewLines: 10
 showQuery: true
 
 cacheOnPreview: true
+
+variables:
+  mytimestamp: '1260759144'
+
+logLevel: WARN
+
+appName: MuziMinSpark_V1.0
 ```
 
 ### 如果配置step.yaml文件
@@ -111,6 +139,12 @@ steps:
   params:
     param1: 20210101
     param2: 20220101
+    
+- dataFrameName: myFavoriteMovieRated
+  sql:
+    SELECT *,'测试环境变量' as test
+    FROM moviesWithRatings
+    WHERE timestamp = ${mytimestamp}
 ```
 
 

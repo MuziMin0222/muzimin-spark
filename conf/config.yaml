@@ -8,7 +8,6 @@ inputs:
       path: examples/file_inputs
       format: csv
       options:
-        delimiter: "\u0001"
         nullValue: "空值"
 
 showPreviewLines: 10
@@ -16,3 +15,12 @@ showPreviewLines: 10
 showQuery: true
 
 cacheOnPreview: true
+
+variables:
+  myFavoriteMovie: '1260759144'
+
+logLevel: INFO
+
+output:
+  file:
+    dir: examples/file_outputs/op1

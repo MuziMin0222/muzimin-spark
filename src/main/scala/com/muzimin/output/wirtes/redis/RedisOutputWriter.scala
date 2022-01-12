@@ -48,7 +48,6 @@ object RedisOutputWriter extends WriterSessionRegistration {
 }
 
 class RedisOutputWriter(props: Map[String, String], spark: SparkSession) extends Writer {
-  private val log = LogManager.getLogger(this.getClass)
 
   case class RedisOutputProperties(keyColumn: String)
 
