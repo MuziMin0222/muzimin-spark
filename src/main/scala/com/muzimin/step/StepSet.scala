@@ -16,7 +16,7 @@ class StepSet(stepPath: String, write: Boolean = true) {
   val stepConfSeq: Seq[StepConfig] = parseStep
 
   def parseStep: Seq[StepConfig] = {
-    log.info("开始解析step配置文件")
+    log.info(s"开始解析step配置文件,文件路径是${stepPath}")
 
     Seq(ConfigurationParser.parse(stepPath))
   }

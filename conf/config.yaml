@@ -1,4 +1,3 @@
-# The MQL file path
 steps:
   - conf/step.yaml
 
@@ -17,10 +16,18 @@ showQuery: true
 cacheOnPreview: true
 
 variables:
-  myFavoriteMovie: '1260759144'
+  timestamp: '1260759144'
 
 logLevel: INFO
 
 output:
   file:
     dir: examples/file_outputs/op1
+
+outputs:
+  fileDir1:
+    file:
+      dir: examples/file_outputs/op2
+  fileDir2:
+    file:
+      dir: examples/file_outputs/op3

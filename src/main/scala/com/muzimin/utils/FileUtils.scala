@@ -126,7 +126,7 @@ object FileUtils {
     val fileContents = readFileWithHadoop(prefix + path)*/
 
     val pathSource: BufferedSource = Source.fromFile(path)
-    val fileC = pathSource.getLines().mkString("\n")
+    val fileC = pathSource.getLines().mkString(System.lineSeparator())
     StringSubstitutor.replace(fileC, envAndSystemProperties.asJava)
   }
 

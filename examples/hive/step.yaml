@@ -1,0 +1,4 @@
+steps:
+  - dataFrameName: processCampaign
+    sql:
+      SELECT * FROM tb1

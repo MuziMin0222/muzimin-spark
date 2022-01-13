@@ -1,0 +1,13 @@
+steps:
+  - step.yaml
+
+inputs:
+  tb1:
+    hive:
+      dbName: cdp_dw
+      tbName: fact_campaign
+      condition: etl_date='20220113'
+
+showPreviewLines: 10
+
+showQuery: true

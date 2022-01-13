@@ -5,4 +5,6 @@ package com.muzimin.configuration.job.output
  * @date: 2021-11-18 22:16
  *        ${description}
  **/
-case class Hive()
+case class Hive(
+               database:Option[String]
+               )

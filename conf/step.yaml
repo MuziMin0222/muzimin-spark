@@ -29,10 +29,26 @@ steps:
     sql:
       SELECT *,'测试环境变量' as test
       FROM moviesWithRatings
-      WHERE timestamp = ${myFavoriteMovie}
+      WHERE timestamp = ${timestamp}
 
 output:
   - dataFrameName: myFavoriteMovieRated
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2
+
+  - name: fileDir1
+    dataFrameName: table3
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2
+
+  - name: fileDir2
+    dataFrameName: table3
     outputType: File
     outputOptions:
       saveMode: Overwrite

@@ -29,7 +29,7 @@ steps:
   - conf/step_2.yaml
 ```
 
-2. 配置输入的数据源（目前只实现了file）
+2. 配置输入的数据源（目前只实现了file，hive）
    1. 配置输入源是csv文件，ratings是将csv转为DataFrame后注册的表名，该名称可任取；
    2. file表示该数据源类型是文件；
    3. path可以是一个文件的路径，也可以是一些文件所在的文件夹，该参数选型是必选的；
@@ -84,6 +84,18 @@ inputs:
         file:
           dir: examples/file_outputs/op1
       ```
+      
+   2. 如果有多个输出方式，则可以定义outputs，如果获取则在step文件中进行定义
+
+      ```yaml
+      outputs:
+        fileDir1:
+          file:
+            dir: examples/file_outputs/op2
+        fileDir2:
+          file:
+            dir: examples/file_outputs/op3
+      ```
 
       
 
@@ -117,6 +129,14 @@ appName: MuziMinSpark_V1.0
 output:
   file:
     dir: examples/file_outputs/op1
+    
+outputs:
+  fileDir1:
+    file:
+      dir: examples/file_outputs/op2
+  fileDir2:
+    file:
+      dir: examples/file_outputs/op3
 ```
 
 ### 如何配置step.yaml文件
@@ -128,7 +148,7 @@ output:
    3. file：表示sql所在的sql文件；
    4. classpath：表示继承com.muzimin.job.RichProcessJob的子类，该子类中可以使用代码进行数据操作；案例如下
 
-   ```scala
+   ```
    class Demo1 extends RichProcessJob {
      override def run(sparkSession: SparkSession, dataFrameName: String, params: Option[Map[String, String]]): Unit = {
    
@@ -154,9 +174,11 @@ output:
 
    5. params：表示一些自定义变量，由key-value组成
    6. 定义将哪一个DataFrame输出，output下是一个数组，可以定义多个DataFrame进行输出，目前只实现了输出到文件的方式
+      1. name：非必选项；表示配置文件outputs中定义的输出配置名称
       1. dataFrameName：这是必选项，名称是在steps中得到dataFrameName的名字或者配置文件中input得到的dataFrameName名字
       2. outputType：必选项，目前可选择Parquet, CSV, JSON, File这四种类型
       3. outputOptions：非必选项，定义一些文件的配置项，比如saveMode，format，repartition，partitionBy，extraOptions，path
+      4. repartition: 非必选项，将DataFrame进行重分区，该参数也可放在outputOptions进行定义
    7. step文件的完成样例如下
 
 ```yaml
@@ -200,10 +222,97 @@ output:
       saveMode: Overwrite
       format: csv
       repartition: 2
+
+  - name: fileDir1
+    dataFrameName: table3
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2
+
+  - name: fileDir2
+    dataFrameName: table3
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2
 ```
 
 
 
 # 如何在服务器上通过spark-submit提交任务
+1. 程序打包方式
 
-在服务器运行时，只需要将文件名定义好就行
+```shell script
+mvn clean scala:compile compile jar:jar -DskipTests
+```
+
+2. 在任务目录下创建bin，lib，jar，logs，conf目录
+
+   ![image-20220113224759320](/Users/muzimin/code/IdeaProjects/muziminspark/image-20220113224759320.png)
+
+   1. bin目录：存放脚本
+
+      ![image-20220113230344978](/Users/muzimin/code/IdeaProjects/muziminspark/image-20220113230344978.png)
+
+   2. conf目录：存放配置文件
+
+      ![image-20220113230040594](/Users/muzimin/code/IdeaProjects/muziminspark/image-20220113230040594.png)
+
+   3. jar目录：存在muziminspark程序包
+
+      ![image-20220113230236307](/Users/muzimin/code/IdeaProjects/muziminspark/image-20220113230236307.png)
+
+   4. lib目录：存放第三方依赖以及自己的编写的代码包
+
+      ![image-20220113230150495](/Users/muzimin/code/IdeaProjects/muziminspark/image-20220113230150495.png)
+
+   5. logs目录：存放作业生成的日志
+
+3. 执行脚步案例(目前on yarn模式下，只有cluster起作用，如果client模式下起作用，需要更换另外一种读取方式，目前还在寻找适配两种模式下加载外部文件)
+
+```shell
+#!/bin/bash
+base_dir=`pwd`
+
+jobName=$1
+
+jar_str=""
+for jar in `ls ${base_dir}/lib/*.jar`
+do
+  jar_str=${jar_str},$jar
+done
+
+echo "拼接的jar包路径：${jar_str#*,} "
+
+conf_str=""
+for file in `ls ${base_dir}/conf/${jobName}/*`
+do
+  conf_str=${conf_str},${file}
+done
+
+echo "拼接文件的路径：${conf_str}"
+
+concat_log(){
+  echo ${base_dir}/logs/$1.log
+}
+
+spark2-submit \
+--master yarn \
+--deploy-mode cluster \
+--jars ${jar_str} \
+--files ${conf_str} \
+--class com.muzimin.Application \
+${base_dir}/jar/MuziMinSpark-1.0-SNAPSHOT.jar \
+-c config.yaml \
+> `concat_log ${jobName}` 2>&1
+
+if [[ $? -eq 0 ]]; then
+    echo "任务成功！"
+else
+    echo "任务失败。。。。"
+fi
+```
+
