@@ -38,20 +38,6 @@ class MethodTest {
   }
 
   @Test
-  def testSparkReadStream(): Unit = {
-    val spark = SparkSession.builder()
-      .master("local[*]")
-      .appName("demo")
-      .getOrCreate()
-
-    val streamReader = spark.readStream.format("csv").load("/Users/muzimin/study/test_files/a.csv")
-
-    streamReader.show()
-
-    spark.close()
-  }
-
-  @Test
   def testRequire(): Unit = {
 
     require(1 < 2, "这是必须是True，程序才能往下执行")

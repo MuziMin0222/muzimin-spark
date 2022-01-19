@@ -315,6 +315,9 @@ output:
 
 ```shell script
 mvn clean scala:compile compile jar:jar -DskipTests
+
+将程序安装到本地仓库
+mvn clean install
 ```
 
 2. 在任务目录下创建bin，lib，jar，logs，conf目录
