@@ -112,6 +112,16 @@ inputs:
       format: csv
       options:
         nullValue: "空值"
+  tb1:
+    hive:
+      #非必须，默认值是default
+      dbName: cdp_dw
+      #必选值
+      tbName: fact_campaign
+      #非必选值，默认值是 1 = 1
+      condition: etl_date='20220113'
+      #非必选值：默认值是*
+      columns: campaign_name,campaign_id
 
 showPreviewLines: 10
 
@@ -129,6 +139,10 @@ appName: MuziMinSpark_V1.0
 output:
   file:
     dir: examples/file_outputs/op1
+  hive:
+    dbName: test_cdp_ods
+    tbName: test_muzimin_spark
+    tbType: full
     
 outputs:
   fileDir1:
@@ -137,6 +151,16 @@ outputs:
   fileDir2:
     file:
       dir: examples/file_outputs/op3
+  out_tb1:
+    hive:
+      dbName: test_cdp_ods
+      tbName: test_muzimin_spark_01
+      tbType: dynamic
+  out_tb2:
+    hive:
+      dbName: test_cdp_ods
+      tbName: test_muzimin_spark_02
+      tbType: static
 ```
 
 ### 如何配置step.yaml文件
@@ -183,37 +207,40 @@ outputs:
 
 ```yaml
 steps:
-- dataFrameName: moviesWithRatings
-  sql:
-    SELECT userid,
-           movieid,
-           rating,
-           timestamp,
-           'demo' as title,
-           '111' as genres
-    FROM ratings
-- dataFrameName: fantasyMoviesWithRatings
-  sql:
-    SELECT movieId,
-           cast(rating AS float) AS rating,
-           timestamp,
-           title,
-           genres
-    FROM moviesWithRatings
-- dataFrameName: topFantasyMovies
-  file: examples/sqlFile/topFantasyMovies.sql
-
-- dataFrameName: table3
-  classpath: com.muzimin.job.mycode.Demo1
-  params:
-    param1: 20210101
-    param2: 20220101
-    
-- dataFrameName: myFavoriteMovieRated
-  sql:
-    SELECT *,'测试环境变量' as test
-    FROM moviesWithRatings
-    WHERE timestamp = ${mytimestamp}
+  - dataFrameName: moviesWithRatings
+    sql:
+      SELECT userid,
+             movieid,
+             rating,
+             timestamp,
+             'demo' as title,
+             '111' as genres
+      FROM ratings
+  - dataFrameName: fantasyMoviesWithRatings
+    sql:
+      SELECT movieId,
+             cast(rating AS float) AS rating,
+             timestamp,
+             title,
+             genres
+      FROM moviesWithRatings
+  - dataFrameName: topFantasyMovies
+    file: examples/sqlFile/topFantasyMovies.sql
+  
+  - dataFrameName: table3
+    classpath: com.muzimin.job.mycode.Demo1
+    params:
+      param1: 20210101
+      param2: 20220101
+      
+  - dataFrameName: myFavoriteMovieRated
+    sql:
+      SELECT *,'测试环境变量' as test
+      FROM moviesWithRatings
+      WHERE timestamp = ${mytimestamp}
+  - dataFrameName: processCampaign
+    sql:
+      SELECT *,'2022' as year,'01' as month,'18' as day FROM tb1
     
 output:
   - dataFrameName: myFavoriteMovieRated
@@ -238,6 +265,47 @@ output:
       saveMode: Overwrite
       format: csv
       repartition: 2
+  - dataFrameName: processCampaign
+    outputType: Hive
+    repartition: 1
+    outputOptions:
+      columns: campaign_name string|campaign_id string
+      fieldDelim: "\u0001"
+      location: "s3a://cdp-etl/lhm_work/muziminspark/test_muzimin_spark"
+
+  - name: out_tb1
+    dataFrameName: processCampaign
+    outputType: Hive
+    repartition: 1
+    outputOptions:
+      columns: campaign_name string|campaign_id string
+      partitions: year char(6)|month string|day string
+      rowFormatSerde: org.apache.hadoop.hive.ql.io.orc.OrcSerde
+      collectionDelim: "\u0002"
+      fieldDelim: "\u0001"
+      mapkeyDelim: "\u0003"
+      inputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcInputFormat"
+      outputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat"
+      location: "s3a://cdp-etl/lhm_work/muziminspark/test_muzimin_spark_01"
+
+  - name: out_tb2
+    dataFrameName: processCampaign
+    outputType: Hive
+    repartition: 1
+    outputOptions:
+      columns: campaign_name string|campaign_id string
+      partitions: year char(6)|month string|day string
+      rowFormatSerde: org.apache.hadoop.hive.ql.io.orc.OrcSerde
+      collectionDelim: "\u0002"
+      fieldDelim: "\u0001"
+      mapkeyDelim: "\u0003"
+      inputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcInputFormat"
+      outputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat"
+      location: "s3a://cdp-etl/lhm_work/muziminspark/test_muzimin_spark_02"
+      partitionValue:
+        year: "2021"
+        month: "10"
+        day: "12"
 ```
 
 
