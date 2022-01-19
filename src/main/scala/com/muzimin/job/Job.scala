@@ -20,6 +20,7 @@ object Job {
   private val log = LogManager.getLogger(this.getClass)
 
   def createSparkSession(appName: Option[String], output: Option[Output]): SparkSession = {
+    //在yarn cluster中设置的appName不生效，优先读取命令行中--name所带的名称，没有该参数，则使用启动类的全路径
     val sparkBuilder: SparkSession.Builder = SparkSession.builder().appName(appName.get)
 
     output match {

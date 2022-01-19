@@ -6,5 +6,7 @@ package com.muzimin.configuration.job.output
  *        ${description}
  **/
 case class Hive(
-               database:Option[String]
+                 dbName: Option[String],
+                 tbName: String,
+                 tbType: String
                )

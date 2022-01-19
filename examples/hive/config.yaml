@@ -1,5 +1,5 @@
 steps:
-  - step.yaml
+  - examples/hive/step.yaml
 
 inputs:
   tb1:
@@ -11,3 +11,23 @@ inputs:
 showPreviewLines: 10
 
 showQuery: true
+
+appName: MuziminSpark_Hive
+
+output:
+  hive:
+    dbName: test_cdp_ods
+    tbName: test_muzimin_spark
+    tbType: full
+
+outputs:
+  out_tb1:
+    hive:
+      dbName: test_cdp_ods
+      tbName: test_muzimin_spark_01
+      tbType: dynamic
+  out_tb2:
+    hive:
+      dbName: test_cdp_ods
+      tbName: test_muzimin_spark_02
+      tbType: static

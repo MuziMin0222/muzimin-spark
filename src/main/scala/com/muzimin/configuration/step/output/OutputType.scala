@@ -11,5 +11,5 @@ import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 object OutputType extends Enumeration {
   type OutputType = Value
 
-  val Parquet, CSV, JSON, File = Value
+  val Parquet, CSV, JSON, File, Hive = Value
 }

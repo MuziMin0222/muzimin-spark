@@ -1,0 +1,33 @@
+steps:
+  - conf/step.yaml
+
+inputs:
+  ratings:
+    file:
+      path: examples/file_inputs
+      format: csv
+      options:
+        nullValue: "空值"
+
+showPreviewLines: 10
+
+showQuery: true
+
+cacheOnPreview: true
+
+variables:
+  timestamp: '1260759144'
+
+logLevel: INFO
+
+output:
+  file:
+    dir: examples/file_outputs/op1
+
+outputs:
+  fileDir1:
+    file:
+      dir: examples/file_outputs/op2
+  fileDir2:
+    file:
+      dir: examples/file_outputs/op3

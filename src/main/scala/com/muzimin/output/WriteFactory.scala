@@ -5,6 +5,7 @@ import com.muzimin.configuration.step.Output
 import com.muzimin.configuration.step.output.OutputType
 import com.muzimin.job.Job
 import com.muzimin.output.wirtes.file.FileOutputWriter
+import com.muzimin.output.wirtes.hive.HiveOutputWriter
 
 
 /**
@@ -25,11 +26,14 @@ object WriteFactory {
       }
     }
 
-    val stepOutputOptions = outputConfig.outputOptions
+    val stepOutputOptions: Map[String, Any] = outputConfig.outputOptions
 
     val writer = outputConfig.outputType match {
       case OutputType.File => {
         new FileOutputWriter(stepOutputOptions, output.file)
+      }
+      case OutputType.Hive => {
+        new HiveOutputWriter(outputConfig: Output, output.hive, job.spark)
       }
       case _ => {
         throw new Exception(s"不支持的写出操作==> ${outputConfig.outputType}")

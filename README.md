@@ -242,7 +242,7 @@ output:
 
 
 
-# 如何在服务器上通过spark-submit提交任务
+# 如何在服务器上通过spark-submit on yarn cluster提交任务
 1. 程序打包方式
 
 ```shell script
@@ -261,6 +261,35 @@ mvn clean scala:compile compile jar:jar -DskipTests
 
       <img src="image/image-20220113230040594.png" alt="image-20220113230040594" style="zoom:50%;" />
 
+      1. config.yaml
+
+         ```
+         steps:
+           - step.yaml
+         
+         inputs:
+           tb1:
+             hive:
+               dbName: default
+               tbName: demo
+               condition: date='20220113'
+         
+         showPreviewLines: 10
+         
+         showQuery: true
+         ```
+
+      2. step.yaml
+
+         ```
+         steps:
+           - dataFrameName: processCampaign
+             sql:
+               SELECT * FROM tb1
+         ```
+
+         
+
    3. jar目录：存在muziminspark程序包
 
       ![image-20220113230236307](image/image-20220113230236307.png)
@@ -275,7 +304,7 @@ mvn clean scala:compile compile jar:jar -DskipTests
 
 ```shell
 #!/bin/bash
-base_dir=`pwd`
+base_dir=$(dirname $(pwd))
 
 jobName=$1
 
@@ -300,12 +329,12 @@ concat_log(){
 }
 
 spark2-submit \
+--queue root.users.cdp_etl \
 --master yarn \
 --deploy-mode cluster \
 --jars ${jar_str} \
 --files ${conf_str} \
---class com.muzimin.Application \
-${base_dir}/jar/MuziMinSpark-1.0-SNAPSHOT.jar \
+--class com.muzimin.Application ${base_dir}/jar/MuziMinSpark-1.0-SNAPSHOT.jar \
 -c config.yaml \
 > `concat_log ${jobName}` 2>&1
 

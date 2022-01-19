@@ -1,6 +1,8 @@
 #!/bin/bash
 kinit -kt /home/cdp_etl/cdp_etl.keytab
-base_dir="/home/cdp_etl/batch/lhm/muziminspark"
+base_dir=$(dirname $(pwd))
+
+jobName=$1
 
 jar_str=""
 for jar in `ls ${base_dir}/lib/*.jar`
@@ -11,7 +13,7 @@ done
 echo "拼接的jar包路径：${jar_str#*,} "
 
 conf_str=""
-for file in `ls ${base_dir}/conf/*`
+for file in `ls ${base_dir}/conf/${jobName}/*`
 do
   conf_str=${conf_str},${file}
 done
@@ -25,12 +27,13 @@ concat_log(){
 spark2-submit \
 --queue root.users.cdp_etl \
 --master yarn \
---deploy-mode client \
+--deploy-mode cluster \
 --jars ${jar_str} \
 --files ${conf_str} \
+--name ${jobName} \
 --class com.muzimin.Application ${base_dir}/jar/MuziMinSpark-1.0-SNAPSHOT.jar \
 -c config.yaml \
-> `concat_log $1` 2>&1
+> `concat_log ${jobName}` 2>&1
 
 if [[ $? -eq 0 ]]; then
     echo "任务成功！"

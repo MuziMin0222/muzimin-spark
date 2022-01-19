@@ -1,4 +1,47 @@
 steps:
   - dataFrameName: processCampaign
     sql:
-      SELECT * FROM tb1
+      SELECT *,'2022' as year,'01' as month,'18' as day FROM tb1
+
+output:
+  - dataFrameName: processCampaign
+    outputType: Hive
+    repartition: 1
+    outputOptions:
+      columns: campaign_name string|campaign_id string
+      fieldDelim: "\u0001"
+      location: "s3a://cdp-etl/lhm_work/muziminspark/test_muzimin_spark"
+
+  - name: out_tb1
+    dataFrameName: processCampaign
+    outputType: Hive
+    repartition: 1
+    outputOptions:
+      columns: campaign_name string|campaign_id string
+      partitions: year char(6)|month string|day string
+      rowFormatSerde: org.apache.hadoop.hive.ql.io.orc.OrcSerde
+      collectionDelim: "\u0002"
+      fieldDelim: "\u0001"
+      mapkeyDelim: "\u0003"
+      inputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcInputFormat"
+      outputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat"
+      location: "s3a://cdp-etl/lhm_work/muziminspark/test_muzimin_spark_01"
+
+  - name: out_tb2
+    dataFrameName: processCampaign
+    outputType: Hive
+    repartition: 1
+    outputOptions:
+      columns: campaign_name string|campaign_id string
+      partitions: year char(6)|month string|day string
+      rowFormatSerde: org.apache.hadoop.hive.ql.io.orc.OrcSerde
+      collectionDelim: "\u0002"
+      fieldDelim: "\u0001"
+      mapkeyDelim: "\u0003"
+      inputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcInputFormat"
+      outputFormat: "org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat"
+      location: "s3a://cdp-etl/lhm_work/muziminspark/test_muzimin_spark_02"
+      partitionValue:
+        year: "2021"
+        month: "10"
+        day: "12"
