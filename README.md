@@ -329,11 +329,11 @@ concat_log(){
 }
 
 spark2-submit \
---queue root.users.cdp_etl \
 --master yarn \
 --deploy-mode cluster \
 --jars ${jar_str} \
 --files ${conf_str} \
+--name ${jobName} \
 --class com.muzimin.Application ${base_dir}/jar/MuziMinSpark-1.0-SNAPSHOT.jar \
 -c config.yaml \
 > `concat_log ${jobName}` 2>&1

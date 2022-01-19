@@ -1,5 +1,4 @@
 #!/bin/bash
-kinit -kt /home/cdp_etl/cdp_etl.keytab
 base_dir=$(dirname $(pwd))
 
 jobName=$1
@@ -25,7 +24,6 @@ concat_log(){
 }
 
 spark2-submit \
---queue root.users.cdp_etl \
 --master yarn \
 --deploy-mode cluster \
 --jars ${jar_str} \
