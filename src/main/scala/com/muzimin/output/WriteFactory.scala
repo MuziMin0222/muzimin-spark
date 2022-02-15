@@ -6,6 +6,7 @@ import com.muzimin.configuration.step.output.OutputType
 import com.muzimin.job.Job
 import com.muzimin.output.wirtes.file.FileOutputWriter
 import com.muzimin.output.wirtes.hive.HiveOutputWriter
+import com.muzimin.output.wirtes.jdbc.JdbcOutputWriter
 
 
 /**
@@ -34,6 +35,9 @@ object WriteFactory {
       }
       case OutputType.Hive => {
         new HiveOutputWriter(outputConfig: Output, output.hive, job.spark)
+      }
+      case OutputType.JDBC => {
+        new JdbcOutputWriter(stepOutputOptions, output.jdbc)
       }
       case _ => {
         throw new Exception(s"不支持的写出操作==> ${outputConfig.outputType}")

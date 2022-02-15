@@ -17,7 +17,7 @@ object ConfigurationParser {
 
   def parse(path: String): StepConfig = {
     val fileName = path.substring(path.lastIndexOf(File.separator) + 1)
-    log.info(s"开始实例化步骤文件 $fileName ,该文件的内容是: ${System.lineSeparator()} ${FileUtils.readConfigurationFile(fileName)}")
+    log.info(s"开始实例化步骤文件 $fileName ,该文件的内容是: ${System.lineSeparator()} ${FileUtils.readConfigurationFile(path)}")
 
     try {
       val stepConfig = parseFile(path)

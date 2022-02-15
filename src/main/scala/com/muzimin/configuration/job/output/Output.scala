@@ -8,5 +8,6 @@ package com.muzimin.configuration.job.output
 case class Output(
                    redis: Option[Redis] = None,
                    hive: Option[Hive] = None,
-                   file:Option[File] = None
+                   file: Option[File] = None,
+                   jdbc: Option[JDBC] = None
                  )

@@ -20,6 +20,7 @@
         <log4j.version>1.2.17</log4j.version>
         <junit.version>4.12</junit.version>
         <hutool.version>5.7.7</hutool.version>
+        <mysql.version>8.0.16</mysql.version>
     </properties>
 
     <repositories>
@@ -56,6 +57,13 @@
             <groupId>com.github.scopt</groupId>
             <artifactId>scopt_2.11</artifactId>
             <version>3.7.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/junit/junit -->

@@ -77,13 +77,13 @@ case class StepConfig(
             val repartitionDF = repartition(outputConfig, dataFrame)
 
             log.info(s"开始将${dataFrameName}的数据写入到${outputConfig.outputType}中")
-            try {
-              writer.write(repartitionDF)
-            } catch {
-              case e:Exception => {
-                throw new Exception(s"${dataFrameName}的数据写入到${outputConfig.outputType}失败，请检查步骤文件是否正确")
-              }
-            }
+            //try {
+            writer.write(repartitionDF)
+            //} catch {
+            //  case e:Exception => {
+            //    throw new Exception(s"${dataFrameName}的数据写入到${outputConfig.outputType}失败，请检查步骤文件是否正确")
+            //  }
+            //}
           }
         )
       }
