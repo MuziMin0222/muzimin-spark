@@ -1,7 +1,84 @@
 # MuziMinSpark  
-  用于spark大数据开发框架，让开发人员更加注重业务逻辑，无需关注数据的读取，写入，只需在意dataframe/dateset之间的转换
+受https://github.com/YotpoLtd/metorikku该框架启发以及改造而成，添加新功能并缩减实时功能  
+
+用于spark大数据开发框架，让开发人员更加注重业务逻辑，无需关注数据的读取，写入，只需在意dataframe/dateset之间的转换
+
+# 开始
+
+要使用MuziminSpark，必须要先定义两个文件，一个是配置文件，另外一个是步骤文件（可以是一个，可以是多个，但必须要有），且文件格式是yaml
+
+1. 一个配置文件简单的案例如下
+
+   ```yaml
+   steps:
+     - conf/step.yaml
+   
+   inputs:
+     source_01:
+       file:
+         path: examples/file_inputs
+         format: csv
+   
+   output:
+     file:
+       dir: examples/file_outputs/op1
+   ```
+
+2. 一个步骤文件简单的案例配置如下
+
+   ```yaml
+   steps:
+     - dataFrameName: res_1
+       sql:
+         SELECT userid,
+                movieid,
+                rating,
+                timestamp,
+                'demo' as title,
+                '111' as genres
+         FROM source_01
+   
+   output:
+     - dataFrameName: res_1
+       outputType: File
+       outputOptions:
+         saveMode: Overwrite
+         format: csv
+         repartition: 2
+   ```
+
+# 如何使用
+
+1. 将代码下载/克隆到本地，确保自己的环境已安装JDK1.8，Maven，Git等环境
+
+```shell
+git clone https://github.com/MuziMin0222/MuziMinSpark.git
+```
+
+2. 将pom.xml文件中的spark，hadoop等版本调整到自己环境中对应的版本
+
+3. 将程序部署在自己的本地仓库中（还未公开至Maven中央仓库，暂且用这种方式部署）
+
+   ```shell
+   将程序封装成jar包
+   mvn clean scala:compile compile jar:jar -DskipTests
+   
+   将程序安装到本地仓库
+   mvn clean install
+   ```
+
+4. 在自己的代码中的pom文件中引入刚刚打好的jar包
+
+   ```
+   <dependency>
+   		<groupId>com.muzimin</groupId>
+   		<artifactId>muzimin</artifactId>
+   		<version>1.0</version>
+   </dependency>
+   ```
 
 # 如何在idea中运行示例代码
+
 在本地运行时，需要将所有的文件的路径写成绝对/相对路径
 1. VM options中添加
 ```yaml
@@ -29,7 +106,7 @@ steps:
   - conf/step_2.yaml
 ```
 
-2. 配置输入的数据源（目前只实现了file，hive）
+2. 配置输入的数据源（目前只实现了file，hive，jdbc）
    1. 配置输入源是csv文件，ratings是将csv转为DataFrame后注册的表名，该名称可任取；
    2. file表示该数据源类型是文件；
    3. path可以是一个文件的路径，也可以是一些文件所在的文件夹，该参数选型是必选的；
