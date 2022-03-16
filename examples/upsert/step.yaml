@@ -1,0 +1,11 @@
+steps:
+  - dataFrameName: processSource
+    sql:
+      SELECT id,name,12 as pv,34 as uv
+      FROM source_01
+
+output:
+  - dataFrameName: processSource
+    outputType: Upsert
+    outputOptions:
+      dbTable: tb_b

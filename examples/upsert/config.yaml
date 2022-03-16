@@ -1,0 +1,33 @@
+steps:
+  - examples/upsert/step.yaml
+
+inputs:
+  source_01:
+    jdbc:
+      connectionUrl: jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8
+      user: root
+      password: Lhm18779700731!
+      table: tb_muzimin
+      #非必选项
+      options:
+        numPartitions: 100
+        driver: com.mysql.cj.jdbc.Driver
+
+showPreviewLines: 10
+
+showQuery: true
+
+cacheOnPreview: true
+
+logLevel: INFO
+
+output:
+  upsert:
+    connectionUrl: "jdbc:mysql://localhost:3306/test"
+    user: root
+    password: Lhm18779700731!
+    driver: "com.mysql.cj.jdbc.Driver"
+    duplicateIncs: pv,uv
+    format: "org.apache.spark.sql.execution.datasources.jdbc2"
+    saveMode: Update
+    showSql: true
