@@ -10,7 +10,7 @@ case class Upsert(
                    user: String,
                    password: String,
                    driver: String,
-                   duplicateIncs: String,
+                   duplicateIncs: Option[String],
                    format: Option[String],
                    saveMode: Option[String],
                    useSSL: Option[String],

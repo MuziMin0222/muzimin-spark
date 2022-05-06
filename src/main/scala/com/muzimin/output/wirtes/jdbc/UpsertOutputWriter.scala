@@ -41,26 +41,27 @@ class UpsertOutputWriter(props: Map[String, Any], upsertConf: Option[Upsert]) ex
     val dbTable = props("dbTable").toString
     log.info("dbTable:" + dbTable)
 
-    val duplicate: String = upsert.duplicateIncs
-    log.info("duplicate:" + duplicate)
+    var mapOption = Map(
+      "savemode" -> saveMode,
+      "driver" -> driver,
+      "url" -> url,
+      "user" -> user,
+      "password" -> passwd,
+      "dbtable" -> dbTable,
+      "showSql" -> upsert.showSql.getOrElse("true")
+    )
 
-    val showSql = upsert.showSql.getOrElse("true")
-    log.info("showSql" + showSql)
+    upsert.duplicateIncs match {
+      case Some(value) => {
+        mapOption += ("duplicateIncs" -> value)
+      }
+      case None =>
+    }
 
     dataFrame
       .write
       .format(format)
-      .options(
-        Map(
-          "savemode" -> saveMode,
-          "driver" -> driver,
-          "url" -> url,
-          "user" -> user,
-          "password" -> passwd,
-          "dbtable" -> dbTable,
-          "duplicateIncs" -> duplicate,
-          "showSql" -> showSql
-        )
-      ).save()
+      .options(mapOption)
+      .save()
   }
 }

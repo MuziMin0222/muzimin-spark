@@ -27,7 +27,8 @@ output:
     user: root
     password: Lhm18779700731!
     driver: "com.mysql.cj.jdbc.Driver"
-    duplicateIncs: pv,uv
+    #duplicateIncs表示是否获取原来的值进行追加
+    #duplicateIncs: pv,uv
     format: "org.apache.spark.sql.execution.datasources.jdbc2"
     saveMode: Update
     showSql: true
