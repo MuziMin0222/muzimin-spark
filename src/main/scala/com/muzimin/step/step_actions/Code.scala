@@ -15,7 +15,9 @@ import scala.language.reflectiveCalls
 case class Code(
                  objectClassPath: String,
                  dataFrameName: String,
-                 params: Option[Map[String, String]]
+                 params: Option[Map[String, String]],
+                 showPreviewLines: Int,
+                 cacheInPreview: Option[Boolean]
                ) extends StepAction[Unit] {
 
   override def run(spark: SparkSession): Unit = {

@@ -3,7 +3,6 @@ package com.muzimin.step
 import com.muzimin.configuration.step.Step
 import com.muzimin.step.step_actions.{Code, Sql}
 import com.muzimin.utils.FileUtils
-import org.apache.spark.sql.catalyst.expressions.WindowFunctionType.SQL
 
 /**
  * @author: 李煌民
@@ -30,10 +29,10 @@ object StepActionFactory {
           case None => {
             configuration.classpath match {
               case Some(classPath) => {
-                Code(classPath, configuration.dataFrameName, configuration.params)
+                Code(classPath, configuration.dataFrameName, configuration.params, showPreviewLine, cacheOnPreview)
               }
               case None => {
-                throw new Exception("每一个步骤都需要指定sql文件/sql语句，或者实现RichProcessJob接口的代码")
+                throw new Exception("每一个执行步骤都需要指定sql文件/sql语句，或者实现RichProcessJob接口的代码")
               }
             }
           }

@@ -21,7 +21,7 @@ class StepSet(stepPath: String, write: Boolean = true) {
     Seq(ConfigurationParser.parse(stepPath))
   }
 
-  def run(job: Job):Unit = {
+  def run(job: Job): Unit = {
     stepConfSeq.foreach(
       step => {
         val startTime = System.currentTimeMillis()
@@ -32,7 +32,7 @@ class StepSet(stepPath: String, write: Boolean = true) {
         }
 
         val endTime = System.currentTimeMillis()
-        log.info(step.stepFileName +  " 任务执行的时间：" + (endTime - startTime) + "毫秒")
+        log.info(step.stepFileName + " 任务执行的时间：" + (endTime - startTime) + "毫秒")
       }
     )
   }

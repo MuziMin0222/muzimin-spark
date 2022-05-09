@@ -16,8 +16,6 @@ case class Sql(
                 cacheInPreview: Option[Boolean],
                 showQuery: Option[Boolean]
               ) extends StepAction[DataFrame] {
-  val log = LogManager.getLogger(this.getClass)
-
   override def run(spark: SparkSession): DataFrame = {
     showQuery match {
       case Some(true) => {
@@ -32,20 +30,5 @@ case class Sql(
     df.createOrReplaceTempView(dataFrameName)
     printData(df)
     df
-  }
-
-  def printData(df: DataFrame): Unit = {
-    if (showPreviewLines > 0) {
-      cacheInPreview match {
-        case Some(true) => {
-          log.info(s"缓存 ${dataFrameName} DataFrame")
-          df.persist()
-        }
-        case _ =>
-      }
-
-      log.info(s"开始展示${dataFrameName}的数据")
-      df.show(showPreviewLines, truncate = false)
-    }
   }
 }
