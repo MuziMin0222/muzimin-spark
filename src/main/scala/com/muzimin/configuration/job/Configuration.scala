@@ -3,6 +3,8 @@ package com.muzimin.configuration.job
 import com.muzimin.configuration.job.catalog.Catalog
 import com.muzimin.configuration.job.input.Input
 import com.muzimin.configuration.job.output.Output
+import com.muzimin.configuration.job.output_conf.OutputConf
+import com.muzimin.configuration.job.step.Step
 import com.muzimin.input.Reader
 
 /**
@@ -11,11 +13,12 @@ import com.muzimin.input.Reader
  *       ${description}
  **/
 case class Configuration(
-                          steps: Option[Seq[String]],
+                          steps: Option[List[Step]],
                           inputs: Option[Map[String, Input]],
                           variables: Option[Map[String, String]], //sql中要配置的变量
-                          output: Option[Output],
-                          outputs: Option[Map[String, Output]],
+                          outputConf: Option[OutputConf],
+                          outputConfs: Option[Map[String, OutputConf]],
+                          output: Option[List[Output]],
                           catalog: Option[Catalog], //Spark Catalog 配置
                           cacheOnPreview: Option[Boolean],
                           showQuery: Option[Boolean],
@@ -47,8 +50,9 @@ case class Configuration(
        |steps -> $steps
        |inputs -> $inputs
        |variables -> $variables
-       |output -> $output
-       |outputs -> $outputs
+       |outputConf -> $outputConf
+       |outputConfs -> $outputConfs
+       |outPut -> $output
        |catalog -> $catalog
        |cacheOnPreview -> $cacheOnPreview
        |showQuery -> $showQuery

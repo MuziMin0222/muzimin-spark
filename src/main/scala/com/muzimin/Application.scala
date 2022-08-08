@@ -3,7 +3,7 @@ package com.muzimin
 import com.muzimin.configuration.job.{Configuration, ConfigurationParser}
 import com.muzimin.job.Job
 import com.muzimin.step.StepSet
-import org.apache.log4j.LogManager
+import org.slf4j.LoggerFactory
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -12,7 +12,7 @@ import org.apache.spark.sql.SparkSession
  *       ${description}
  **/
 object Application {
-  val log = LogManager.getLogger(this.getClass)
+  val log = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]): Unit = {
     log.info("start muzimin - parsing configuration")
@@ -20,7 +20,7 @@ object Application {
     val config: Configuration = ConfigurationParser.parse(args)
     log.info("配置文件内容如下：" + config)
     //根据输出类型，来创建sparkSession对象，不同的输出对应不同的SparkSession配置
-    val spark: SparkSession = Job.createSparkSession(config.appName, config.output)
+    val spark: SparkSession = Job.createSparkSession(config)
 
     try {
       val job = Job(config, Option(spark))
@@ -36,14 +36,14 @@ object Application {
     job.config.steps match {
       case Some(steps) => {
         steps.foreach(
-          stepPath => {
-            val stepSet = new StepSet(stepPath)
+          step => {
+            val stepSet = new StepSet(step, job)
             stepSet.run(job)
           }
         )
       }
       case None => {
-        log.warn("没有执行步骤的定义文件，退出程序")
+        log.error("没有执行步骤的定义，退出程序")
       }
     }
   }

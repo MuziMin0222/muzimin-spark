@@ -1,4 +1,4 @@
-package com.muzimin.configuration.step.output
+package com.muzimin.configuration.job.output
 
 import com.fasterxml.jackson.core.`type`.TypeReference
 

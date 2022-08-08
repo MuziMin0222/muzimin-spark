@@ -1,4 +1,4 @@
-package com.muzimin.configuration.step
+package com.muzimin.configuration.job.step
 
 /**
  * @author: 李煌民

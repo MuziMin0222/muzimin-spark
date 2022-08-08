@@ -17,7 +17,6 @@
         <common.net.version>3.6</common.net.version>
         <common.io.version>2.6</common.io.version>
         <slf4j.version>1.7.7</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
         <junit.version>4.12</junit.version>
         <hutool.version>5.7.7</hutool.version>
         <mysql.version>8.0.16</mysql.version>
@@ -113,12 +112,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
             <scope>runtime</scope>
         </dependency>
 

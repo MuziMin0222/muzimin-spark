@@ -1,4 +1,4 @@
-package com.muzimin.configuration.job.output
+package com.muzimin.configuration.job.output_conf
 
 /**
  * @author: 李煌民

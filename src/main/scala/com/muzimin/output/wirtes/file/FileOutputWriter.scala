@@ -1,6 +1,6 @@
 package com.muzimin.output.wirtes.file
 
-import com.muzimin.configuration.job.output.File
+import com.muzimin.configuration.job.output_conf.File
 import com.muzimin.output.Writer
 import org.apache.spark.sql.{DataFrame, DataFrameWriter, Row}
 

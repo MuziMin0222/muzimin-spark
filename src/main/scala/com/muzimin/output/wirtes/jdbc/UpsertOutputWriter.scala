@@ -1,6 +1,6 @@
 package com.muzimin.output.wirtes.jdbc
 
-import com.muzimin.configuration.job.output.Upsert
+import com.muzimin.configuration.job.output_conf.Upsert
 import com.muzimin.output.Writer
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.execution.datasources.jdbc2.JDBCSaveMode

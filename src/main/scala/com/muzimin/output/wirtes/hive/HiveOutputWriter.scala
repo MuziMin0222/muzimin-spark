@@ -1,7 +1,7 @@
 package com.muzimin.output.wirtes.hive
 
-import com.muzimin.configuration.job.output.Hive
-import com.muzimin.configuration.step.Output
+import com.muzimin.configuration.job.output.Output
+import com.muzimin.configuration.job.output_conf.Hive
 import com.muzimin.output.{Writer, WriterSessionRegistration}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 

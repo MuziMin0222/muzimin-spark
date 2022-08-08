@@ -1,6 +1,6 @@
 package com.muzimin.output.wirtes.redis
 
-import com.muzimin.configuration.job.output.Redis
+import com.muzimin.configuration.job.output_conf.Redis
 import com.muzimin.output.{Writer, WriterSessionRegistration}
 import org.apache.log4j.LogManager
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}

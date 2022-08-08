@@ -1,11 +1,11 @@
 package com.muzimin.job
 
 import com.muzimin.configuration.job.Configuration
-import com.muzimin.configuration.job.output.Output
+import com.muzimin.configuration.job.output_conf.OutputConf
 import com.muzimin.input.Reader
 import com.muzimin.output.wirtes.hive.HiveOutputWriter
 import com.muzimin.output.wirtes.redis.RedisOutputWriter
-import org.apache.log4j.LogManager
+import org.slf4j.LoggerFactory
 import org.apache.spark.SparkContext
 import org.apache.spark.scheduler.{SparkListener, SparkListenerJobEnd}
 import org.apache.spark.sql.SparkSession
@@ -17,13 +17,13 @@ import org.apache.spark.sql.SparkSession
  *        ${description}
  **/
 object Job {
-  private val log = LogManager.getLogger(this.getClass)
+  private val log = LoggerFactory.getLogger(this.getClass)
 
-  def createSparkSession(appName: Option[String], output: Option[Output]): SparkSession = {
+  def createSparkSession(config: Configuration): SparkSession = {
     //在yarn cluster中设置的appName不生效，优先读取命令行中--name所带的名称，没有该参数，则使用启动类的全路径
-    val sparkBuilder: SparkSession.Builder = SparkSession.builder().appName(appName.get)
+    val sparkBuilder: SparkSession.Builder = SparkSession.builder().appName(config.appName.get)
 
-    output match {
+    config.outputConf match {
       case Some(out) => {
         out.hive match {
           case Some(hive) => {
@@ -45,13 +45,13 @@ object Job {
 }
 
 case class Job(config: Configuration, sparkSession: Option[SparkSession] = None) {
-  private val log = LogManager.getLogger(this.getClass)
+  private val log = LoggerFactory.getLogger(this.getClass)
 
   //sparkSession 定义
   val spark = sparkSession match {
     case Some(ss) => ss
     case _ => {
-      Job.createSparkSession(config.appName, config.output)
+      Job.createSparkSession(config)
     }
   }
   val sc = spark.sparkContext

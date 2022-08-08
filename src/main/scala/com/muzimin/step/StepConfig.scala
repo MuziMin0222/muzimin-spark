@@ -1,9 +1,10 @@
 package com.muzimin.step
 
-import com.muzimin.configuration.step.{Configuration, Output}
+import com.muzimin.configuration.job.output.Output
+import com.muzimin.configuration.job.step.Step
 import com.muzimin.job.Job
 import com.muzimin.output.WriteFactory
-import org.apache.log4j.LogManager
+import org.slf4j.LoggerFactory
 import org.apache.spark.sql.DataFrame
 
 /**
@@ -12,34 +13,40 @@ import org.apache.spark.sql.DataFrame
  *        ${description}
  **/
 case class StepConfig(
-                       configuration: Configuration,
-                       stepFileName: String
+                       step: Step,
+                       job: Job
                      ) {
-  val log = LogManager.getLogger(this.getClass)
-
-  log.info("操作步骤执行文件的配置项如下：" + configuration.toString)
+  val log = LoggerFactory.getLogger(this.getClass)
 
   //执行计算步骤
   def transform(job: Job): Unit = {
-    configuration.steps.foreach(
-      stepConfig => {
-        val stepAction: StepAction[_] = StepActionFactory.getStepAction(
-          stepConfig,
-          job.config.showPreviewLines.get,
-          job.config.cacheOnPreview,
-          job.config.showQuery
-        )
+    job.config.steps match {
+      case Some(stepSeq) => {
+        stepSeq.foreach(
+          stepConfig => {
+            val stepAction: StepAction[_] = StepActionFactory.getStepAction(
+              stepConfig,
+              job.config.showPreviewLines.get,
+              job.config.cacheOnPreview,
+              job.config.showQuery
+            )
 
-        try {
-          log.info(s"开始执行计算步骤：${stepConfig.dataFrameName}")
-          stepAction.run(job.spark)
-        } catch {
-          case e: Exception => {
-            throw new Exception("任务执行失败" + e.printStackTrace())
+            try {
+              log.info(s"开始执行计算步骤：${stepConfig.dataFrameName}")
+              stepAction.run(job.spark)
+            } catch {
+              case e: Exception => {
+                throw new Exception("任务执行失败" + e.printStackTrace())
+              }
+            }
           }
-        }
+        )
       }
-    )
+      case None => {
+        log.error("没有指定执行步骤。。。")
+        throw new Exception("没有指定执行步骤。。。")
+      }
+    }
   }
 
   /**
@@ -61,32 +68,31 @@ case class StepConfig(
     }
   }
 
-  def write(job: Job): Unit = {
-    configuration.output match {
+  def write(job: Job, dfName: String): Unit = {
+    job.config.output match {
       case Some(outputs) => {
-        outputs.foreach(
-          outputConfig => {
-            //根据配置的不同创建不同的writer
-            val writer = WriteFactory.getWriter(outputConfig, job.config, job)
 
-            //该DataFrameName是Step中的中确认的DataFrameName
-            val dataFrameName = outputConfig.dataFrameName
+        log.info(s"将临时表：${dfName} 验证是否需要写入操作")
+        outputs
+          .filter(_.dataFrameName == dfName)
+          .foreach(
+            outputConfig => {
+              //根据配置的不同创建不同的writer
+              val writer = WriteFactory.getWriter(outputConfig, job.config, job)
 
-            //将临时表转为DataFrame
-            val dataFrame = job.spark.table(dataFrameName)
-            val repartitionDF = repartition(outputConfig, dataFrame)
+              //该DataFrameName是Step中的中确认的DataFrameName
+              val dataFrameName = outputConfig.dataFrameName
 
-            log.info(s"开始将${dataFrameName}的数据写入到${outputConfig.outputType}中")
-            //try {
-            writer.write(repartitionDF)
-            //} catch {
-            //  case e:Exception => {
-            //    throw new Exception(s"${dataFrameName}的数据写入到${outputConfig.outputType}失败，请检查步骤文件是否正确")
-            //  }
-            //}
-          }
-        )
+              //将临时表转为DataFrame
+              val dataFrame = job.spark.table(dataFrameName)
+              val repartitionDF = repartition(outputConfig, dataFrame)
+
+              log.info(s"StepConfig.write ===> 开始将${dataFrameName}的数据写入到${outputConfig.outputType}中")
+              writer.write(repartitionDF)
+            }
+          )
       }
+
       case None =>
     }
   }

@@ -3,7 +3,7 @@ package com.muzimin.output.wirtes.jdbc
 import java.sql.DriverManager
 import java.util.Properties
 
-import com.muzimin.configuration.job.output.JDBC
+import com.muzimin.configuration.job.output_conf.JDBC
 import com.muzimin.output.Writer
 import org.apache.spark.sql.{DataFrame, SaveMode}
 

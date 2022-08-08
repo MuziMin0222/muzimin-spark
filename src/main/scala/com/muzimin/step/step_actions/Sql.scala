@@ -1,7 +1,6 @@
 package com.muzimin.step.step_actions
 
 import com.muzimin.step.StepAction
-import org.apache.log4j.LogManager
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 /**

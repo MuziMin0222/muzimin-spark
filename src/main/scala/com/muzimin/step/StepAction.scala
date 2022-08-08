@@ -1,6 +1,6 @@
 package com.muzimin.step
 
-import org.apache.log4j.LogManager
+import org.slf4j.LoggerFactory
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 /**
@@ -9,7 +9,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
  *        ${description}
  **/
 trait StepAction[A] {
-  val log = LogManager.getLogger(this.getClass)
+  val log = LoggerFactory.getLogger(this.getClass)
 
   def dataFrameName: String
 

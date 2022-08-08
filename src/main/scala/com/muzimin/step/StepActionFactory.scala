@@ -1,6 +1,6 @@
 package com.muzimin.step
 
-import com.muzimin.configuration.step.Step
+import com.muzimin.configuration.job.step.Step
 import com.muzimin.step.step_actions.{Code, Sql}
 import com.muzimin.utils.FileUtils
 

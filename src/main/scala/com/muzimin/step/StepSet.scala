@@ -1,39 +1,35 @@
 package com.muzimin.step
 
-import com.muzimin.configuration.step.{Configuration, ConfigurationParser}
+import com.muzimin.configuration.job.ConfigurationParser
+import com.muzimin.configuration.job.step.Step
 import com.muzimin.job.Job
-import org.apache.log4j.LogManager
+import org.slf4j.LoggerFactory
 
 /**
  * @author: 李煌民
  * @date: 2021-12-30 15:25
  *        ${description}
  **/
-class StepSet(stepPath: String, write: Boolean = true) {
-  val log = LogManager.getLogger(this.getClass)
+class StepSet(step: Step, job: Job) {
+  val log = LoggerFactory.getLogger(this.getClass)
 
   //为了初始化StepSet就进行解析配置文件
-  val stepConfSeq: Seq[StepConfig] = parseStep
+  val stepConf: StepConfig = parseStep
 
-  def parseStep: Seq[StepConfig] = {
-    log.info(s"开始解析step配置文件,文件路径是${stepPath}")
+  def parseStep: StepConfig = {
+    log.info(s"开始执行任务，得到的结果注册为： ${step.dataFrameName}")
 
-    Seq(ConfigurationParser.parse(stepPath))
+    StepConfig(step, job)
   }
 
   def run(job: Job): Unit = {
-    stepConfSeq.foreach(
-      step => {
-        val startTime = System.currentTimeMillis()
 
-        step.transform(job)
-        if (write) {
-          step.write(job)
-        }
+    val startTime = System.currentTimeMillis()
 
-        val endTime = System.currentTimeMillis()
-        log.info(step.stepFileName + " 任务执行的时间：" + (endTime - startTime) + "毫秒")
-      }
-    )
+    stepConf.transform(job)
+    stepConf.write(job, step.dataFrameName)
+
+    val endTime = System.currentTimeMillis()
+    log.info(step.dataFrameName + " 任务执行的时间：" + (endTime - startTime) + "毫秒")
   }
 }
