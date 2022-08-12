@@ -1,0 +1,4 @@
+steps:
+  - dataFrameName: moviesWithRatings
+    sql:
+      SELECT * FROM sourceDF

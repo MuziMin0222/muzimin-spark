@@ -10,10 +10,11 @@ import com.muzimin.input.Reader
 case class Input(
                   file: Option[File],
                   hive: Option[Hive],
-                  jdbc: Option[JDBC]
+                  jdbc: Option[JDBC],
+                  obsData: Option[ObsJson]
                 ) extends InputConfig {
   override def getReader(name: String): Reader = {
-    Seq(file, hive, jdbc).find(
+    Seq(file, hive, jdbc, obsData).find(
       x => {
         x.isDefined
       }

@@ -1,0 +1,14 @@
+steps:
+  - conf/step.yaml
+
+inputs:
+  sourceDF:
+    obsData:
+      ak: YPIYKCXYV3DGM2HAHN6W
+      sk: RXW1F8UHNbE6lb38CeiLelVdNqq1jci9FZa4xpzR
+      endPoint: obs.ap-southeast-3.myhuaweicloud.com
+      bucketName: hw-sinobase
+      prefix: action/2022-08-04
+      schemaColumnOrder: contact_id,open_id,mobile_number,email,action_start_time,action_end_time,duration,action_name,content_id,content_name,industry_tag,product_tag,solution_tag,topic_tag,campaign_id,platform_name,utm_campaign,utm_content,utm_medium,utm_source,utm_object,utm_term,source,prefix_url,content_type,response_sourcetype,register_region,language,form_product,form_requirement,register_source,is_online,country
+
+showPreviewLines: 10
