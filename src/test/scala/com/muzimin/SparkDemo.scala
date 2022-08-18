@@ -32,12 +32,12 @@ object SparkDemo {
   }
 
   def demo01(spark: SparkSession): Unit = {
-    val obsClient = new ObsClient("YPIYKCXYV3DGM2HAHN6W", "RXW1F8UHNbE6lb38CeiLelVdNqq1jci9FZa4xpzR", "obs.ap-southeast-3.myhuaweicloud.com")
+    val obsClient = new ObsClient("sk", "sk", "endPoint")
 
-    val request = new ListObjectsRequest("hw-poc-etl")
+    val request = new ListObjectsRequest("bucketname")
     request.setMaxKeys(100000)
 
-    Option("pre-ods/issmart/obs-issmart-action/2022-05-07/") match {
+    Option("") match {
       case Some(v) => {
         request.setPrefix(v)
       }
@@ -45,7 +45,7 @@ object SparkDemo {
     }
 
     val map = new mutable.HashMap[String, String]()
-    Source.fromInputStream(obsClient.getObject("hw-poc-etl", "pre-ods/issmart/obs-issmart-action/2022-05-07/_success").getObjectContent)
+    Source.fromInputStream(obsClient.getObject("", "").getObjectContent)
       .getLines()
       .foreach(
         line => {
@@ -66,7 +66,7 @@ object SparkDemo {
         val objectKey = obsObject.getObjectKey
 
         if (objectKey.contains("txt")) {
-          val jsonContent = Source.fromInputStream(obsClient.getObject("hw-poc-etl", objectKey).getObjectContent).mkString
+          val jsonContent = Source.fromInputStream(obsClient.getObject("", objectKey).getObjectContent).mkString
 
           val key = objectKey.substring(objectKey.lastIndexOf("/") + 1)
           val md5 = SecureUtil.md5(jsonContent)
