@@ -10,11 +10,11 @@ import scopt.OptionParser
  * @author : 李煌民
  * @date : 2021-09-08 11:02
  *       解析传入进来的config.yaml 或者 传入进来的json数据/文件
- **/
+ * */
 object ConfigurationParser {
   final val log: Logger = LogManager.getLogger(this.getClass)
 
-  case class ConfigFileName(confFilePath: Option[String] = None)
+  case class ConfigFileName(confFilePath: Option[String] = None, dt: Option[String] = None)
 
   private val CLIParser: OptionParser[ConfigFileName] = new scopt.OptionParser[ConfigFileName]("MuziMin") {
     head("MuziMin", "2.0")
@@ -23,6 +23,11 @@ object ConfigurationParser {
         c.copy(confFilePath = Option(x))
       })
       .text("Path to the job config file (YAML/JSON)")
+    opt[String]('d', "dt")
+      .action((x, c) => {
+        c.copy(dt = Option(x))
+      })
+      .text("dt/t is yyyyMMdd date parse to Yaml file")
 
     help("help") text "use command line arguments to specify the configuration file path or content"
   }
