@@ -2,7 +2,6 @@ package com.muzimin.utils
 
 import java.io.{BufferedReader, File, FileNotFoundException, InputStreamReader}
 import java.util.stream.Collectors
-
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.muzimin.bean.HadoopPath
@@ -128,6 +127,16 @@ object FileUtils {
     val pathSource: BufferedSource = Source.fromFile(path)
     val fileC = pathSource.getLines().mkString(System.lineSeparator())
     StringSubstitutor.replace(fileC, envAndSystemProperties.asJava)
+  }
+
+  def readConfigurationFile(path: String, argsMap: Map[String, String]): String = {
+    val envAndSystemProperties = getEnvProperties()
+
+    val resultMap = envAndSystemProperties ++ argsMap
+
+    val pathSource: BufferedSource = Source.fromFile(path)
+    val fileC = pathSource.getLines().mkString(System.lineSeparator())
+    StringSubstitutor.replace(fileC, resultMap.asJava)
   }
 
   /**
