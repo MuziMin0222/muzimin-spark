@@ -21,7 +21,15 @@ object Job {
 
   def createSparkSession(config: Configuration): SparkSession = {
     //在yarn cluster中设置的appName不生效，优先读取命令行中--name所带的名称，没有该参数，则使用启动类的全路径
-    val sparkBuilder: SparkSession.Builder = SparkSession.builder().appName(config.appName.get)
+    var sparkBuilder: SparkSession.Builder = SparkSession.builder().appName(config.appName.get)
+    config.mode match {
+      case Some(value) => value match {
+        case "local" =>
+          log.info("MUZIMIN SPARK LOG | 在本地环境进行执行")
+          sparkBuilder = sparkBuilder.master("local[*]")
+      }
+      case None =>
+    }
 
     config.outputConf match {
       case Some(out) => {

@@ -21,7 +21,8 @@ object ConfigurationParser {
   case class ConfigFileName(confFilePath: Option[String] = None,
                             dt: Option[String] = None,
                             parseDt: Option[String] = None,
-                            variableFilePath: Option[String] = None
+                            variableFilePath: Option[String] = None,
+                            mode: Option[String] = None
                            )
 
   private val CLIParser: OptionParser[ConfigFileName] = new scopt.OptionParser[ConfigFileName]("MuziMin") {
@@ -46,6 +47,11 @@ object ConfigurationParser {
         c.copy(variableFilePath = Option(x))
       })
       .text("sensitive/s is Configure sensitive data files(properties file)")
+    opt[String]('m', "mode")
+      .action((x, c) => {
+        c.copy(mode = Option(x))
+      })
+      .text("executor mode, local or yarn, default yarn")
 
     help("help") text "use command line arguments to specify the configuration file path or content"
   }
@@ -81,7 +87,14 @@ object ConfigurationParser {
         log.info(s"补充数据map：$argsMap")
 
         log.info(s"匹配上-c/--conf传进来的参数，path: ${fileName}，开始解析conf文件...")
-        parseConfigurationFile(FileUtils.readConfigurationFile(fileName, argsMap), FileUtils.getObjectMapperByFileName(fileName))
+
+        val configuration = parseConfigurationFile(FileUtils.readConfigurationFile(fileName, argsMap), FileUtils.getObjectMapperByFileName(fileName))
+
+        val mode = arguments.mode
+        log.info(s"拿到mode参数: ${mode.getOrElse("")}")
+        configuration.mode = mode
+
+        configuration
       }
     }.getOrElse {
       log.error("请传入参数...")

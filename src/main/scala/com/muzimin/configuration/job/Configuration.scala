@@ -24,7 +24,8 @@ case class Configuration(
                           showQuery: Option[Boolean],
                           var logLevel: Option[String], //日志级别配置
                           var appName: Option[String], //任务的appName配置
-                          var showPreviewLines: Option[Int] //DataFrame show的行数
+                          var showPreviewLines: Option[Int], //DataFrame show的行数
+                          var mode: Option[String] = Option("yarn")
                         ) {
 
   //require 表示step文件必须要有，否则程序直接退出
@@ -59,6 +60,7 @@ case class Configuration(
        |logLevel -> $logLevel
        |appName -> $appName
        |showPreviewLines -> $showPreviewLines
+       |mode -> $mode
        |""".stripMargin
   }
 }

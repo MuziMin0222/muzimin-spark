@@ -16,12 +16,10 @@
 muzimin-spark用于spark大数据开发框架，让开发人员更加注重业务逻辑，无需关注数据的读取，写入，只需在意dataframe/dateset之间的转换
 
 ## 文档链接
-- [版本说明]()
-- [快速上手]()
-- [案例说明]()
+- [文档地址](./muzimin-spark-docs/docs/index.md)
 
 ## 开源地址
-| 分类  | GitHub |  
+| 分类  | GitHub |
 |:---:| :---: |
 | 代码  |  https://github.com/MuziMin0222/muzimin-spark   |
 
@@ -30,6 +28,10 @@ muzimin-spark用于spark大数据开发框架，让开发人员更加注重业�
 - 如果你还有其他想法或者需求，欢迎在issue中交流！
 
 ## 感谢
+- 大数据技术栈
+  - [Spark](https://spark.apache.org/)
+  - [Hadoop](https://hadoop.apache.org/)
+  - [Hive](https://hive.apache.org/)
 - 后端技术栈
     - [hutool](https://github.com/dromara/hutool)
 - 特别感谢
