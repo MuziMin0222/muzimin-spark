@@ -6,6 +6,7 @@ import com.muzimin.utils.{DateUtils, FileUtils}
 import org.apache.log4j.{LogManager, Logger}
 import scopt.OptionParser
 
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.io.Source
@@ -70,9 +71,8 @@ object ConfigurationParser {
           formattedDate
         }
         val parseDt = arguments.parseDt.getOrElse {
-          val currentDate = LocalDate.now()
-          val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-          val formattedDate = currentDate.format(formatter)
+          val date = new SimpleDateFormat("yyyyMMdd").parse(dt)
+          val formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date)
           log.info(s"-p/--parseDt没有传入，使用默认值${formattedDate}...")
           formattedDate
         }
