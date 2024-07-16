@@ -1,6 +1,3 @@
-steps:
-  - conf/step.yaml
-
 inputs:
   ratings:
     file:
@@ -8,6 +5,39 @@ inputs:
       format: csv
       options:
         nullValue: "空值"
+
+steps:
+  - dataFrameName: moviesWithRatings
+    sql:
+      SELECT userid,
+      movieid,
+      rating,
+      timestamp,
+      'demo' as title,
+      '111' as genres
+      FROM ratings
+  - dataFrameName: fantasyMoviesWithRatings
+    sql:
+      SELECT movieId,
+      cast(rating AS float) AS rating,
+      timestamp,
+      title,
+      genres
+      FROM moviesWithRatings
+  - dataFrameName: topFantasyMovies
+    file: examples/sqlFile/topFantasyMovies.sql
+
+  - dataFrameName: table3
+    classpath: com.muzimin.job.mycode.Demo1
+    params:
+      param1: 20210101
+      param2: 20220101
+
+  - dataFrameName: myFavoriteMovieRated
+    sql:
+      SELECT *,'测试环境变量' as test
+      FROM moviesWithRatings
+      WHERE timestamp = ${timestamp}
 
 showPreviewLines: 10
 
@@ -20,14 +50,38 @@ variables:
 
 logLevel: INFO
 
-output:
+outputConf:
   file:
     dir: examples/file_outputs/op1
 
-outputs:
+outputConfs:
   fileDir1:
     file:
       dir: examples/file_outputs/op2
   fileDir2:
     file:
       dir: examples/file_outputs/op3
+
+output:
+  - dataFrameName: myFavoriteMovieRated
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2
+
+  - name: fileDir1
+    dataFrameName: table3
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2
+
+  - name: fileDir2
+    dataFrameName: table3
+    outputType: File
+    outputOptions:
+      saveMode: Overwrite
+      format: csv
+      repartition: 2

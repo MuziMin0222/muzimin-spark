@@ -116,6 +116,8 @@ git clone https://github.com/MuziMin0222/muzimin-spark.git
 
 ## 数据源输入配置
 
+* 配置中注册的dataframe名称，在相同的sparksession下，都是全局共享使用的。
+
 ## inputs配置
 
 目前支持file，jdbc，hive
@@ -184,3 +186,135 @@ inputs:
 ```
 
 ## steps配置
+
+* 目前支持的step配置有，sql，sql file，classpath
+
+```
+steps:
+  ## dataFrameName是下面逻辑处理之后得到的dataFrame名称
+  - dataFrameName: table0
+    sql:
+      SELECT userid,
+      movieid,
+      rating,
+      timestamp,
+      'demo' as title,
+      '111' as genres
+      FROM sourceDF1
+      
+  - dataFrameName: table1
+    sql:
+      SELECT movieId,
+      cast(rating AS float) AS rating,
+      timestamp,
+      title,
+      genres
+      FROM sourceDF2
+      
+  - dataFrameName: table2
+    ## 该SQL文件如果在本地执行，则传入相对路径/绝对路径
+    ## 该SQL文件如果在yarn cluster执行，需要通过--files传入，并在file中传入文件名称
+    file: topFantasyMovies.sql
+
+  - dataFrameName: table3
+    ## 传入自己定义的类的全路径，并将jar包通过--jars进行导入
+    classpath: com.muzimin.job.mycode.Demo1
+    params:
+      param1: 20210101
+      param2: 20220101
+```
+
+### 关于classpath的配置
+
+* 自己的类继承com.muzimin.job.RichProcessJob，返回dataFrameName的名称，该名称可以是自己的dataFrame，也可以是定义的UDF名称。
+* 定义dataFrame名称的操作
+
+```
+import com.muzimin.job.RichProcessJob
+import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.functions._
+
+class Demo1 extends RichProcessJob {
+  override def run(spark: SparkSession, dataFrameName: String, params: Option[Map[String, String]]): Unit = {
+    val df = sparkSession.table("sourceDF1")
+        .withColumn("userId_new",concat(col("userId"),lit("aaaa")))
+
+    df.createOrReplaceTempView(dataFrameName)
+  }
+}
+```
+
+* 定义UDF操作，定义好之后可以在后续的step中进行直接使用
+
+```
+import com.muzimin.job.RichProcessJob
+import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.functions._
+
+class DecrypFunction extends RichProcessJob{
+  override def run(spark: SparkSession, dataFrameName: String, params: Option[Map[String, String]]): Unit = {
+    spark.udf.register(dataFrameName, (column: String) => {
+      column + "muzimin-spark"
+    })
+  }
+}
+```
+
+## output配置
+
+* 目前支持的输出类型有
+  * Parquet
+  * CSV
+  * JSON
+  * File,
+  * Hive
+  * JDBC
+  * Upsert
+* 下面以Hive，JDBC为例子
+
+```
+outputConfs:
+  hiveout:
+    hive:
+      dbName: cdp_dw
+      tbName: dws_issmart_lead_detail
+      tbType: dynamic
+      
+  mysqlout:
+    jdbc:
+      connectionUrl: ${mysql.check.jdbc.url}
+      user: ${mysql.check.jdbc.user}
+      password: ${mysql.check.jdbc.password}
+      driver: "com.mysql.cj.jdbc.Driver"
+      truncate: true
+
+output:
+  - name: hiveout
+    ## 这个dataFrameName是上面input/step得到的dataFrameName
+    dataFrameName: table2
+    outputType: Hive
+    outputOptions:
+      columns: "user_id string|open_id string"
+      location: "hdfs://hacluster/user/hive/warehouse/dw.db/dw_table_1"
+      partitions: dt string
+      
+  - name: mysqlout
+    ## 这个dataFrameName是上面input/step得到的dataFrameName
+    dataFrameName: table3
+    outputType: JDBC
+    outputOptions:
+      saveMode: Append
+      dbTable: mysql_table_name
+```
+
+## variables配置
+
+* 设置了该配置，那么相当于在spark-sql中进行set操作，这是SparkSession下的全局变量，可以在一个任务下各个地方使用
+
+```
+variables:
+  my_variable: 'Spark'
+  my_variable: 'spark2'
+```
+
+![image-20240716170243600](image/spark-sql-set.png)

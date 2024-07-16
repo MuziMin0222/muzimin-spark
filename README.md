@@ -36,3 +36,6 @@ muzimin-spark用于spark大数据开发框架，让开发人员更加注重业�
     - [hutool](https://github.com/dromara/hutool)
 - 特别感谢
     - [metorikku](https://github.com/YotpoLtd/metorikku)  ：参考其对任务的封装思路
+
+## Feature
+- input，output模块增加自定义代码模块，减少框架源码的修改
