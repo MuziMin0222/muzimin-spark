@@ -276,8 +276,8 @@ class DecrypFunction extends RichProcessJob{
 outputConfs:
   hiveout:
     hive:
-      dbName: cdp_dw
-      tbName: dws_issmart_lead_detail
+      dbName: dw
+      tbName: dw_table_a
       tbType: dynamic
       
   mysqlout:
